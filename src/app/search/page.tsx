@@ -116,7 +116,7 @@ export default function SearchPage() {
             <h3 className="text-[15px] font-bold text-text-primary">검색 결과</h3>
             <button className="text-[13px] text-text-muted">최신순 ▾</button>
           </div>
-          <div className="px-5 space-y-3 pb-6">
+          <div className="px-5 space-y-4 pb-6">
             {results.map((item) => (
               <Link key={item.id} href={`/detail/${item.id}`}>
                 <div className="bg-white border border-border rounded-2xl p-4 active:scale-[0.98] transition-transform mb-3">

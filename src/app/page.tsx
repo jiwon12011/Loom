@@ -60,7 +60,7 @@ export default function HomePage() {
               <h2 className="text-[17px] font-bold text-text-primary">최근 복사</h2>
               <Link href="/search" className="flex items-center text-[13px] text-text-muted">전체보기 <ChevronRight size={14} /></Link>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {recentItems.map((item) => (
                 <Link key={item.id} href={`/detail/${item.id}`}>
                   <div className="bg-white border border-border rounded-2xl p-4 active:scale-[0.98] transition-transform">
@@ -97,7 +97,7 @@ export default function HomePage() {
               </div>
               <Link href="/search" className="flex items-center text-[13px] text-text-muted">전체보기 <ChevronRight size={14} /></Link>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {frequentItems.map((item) => (
                 <Link key={item.id} href={`/detail/${item.id}`}>
                   <div className="bg-surface-soft border border-border-light rounded-2xl p-4 active:scale-[0.98] transition-transform">

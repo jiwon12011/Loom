@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { X, FileText, Image, Link2, Sparkles } from "lucide-react";
+import { X, FileText, Image, Link2, Sparkles, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
+import { supabase } from "@/lib/supabase";
 
 const saveTypes = [
   { id: "text", icon: FileText, label: "텍스트", href: "/save" },
@@ -15,16 +16,32 @@ export default function SavePage() {
   const router = useRouter();
   const { show } = useToast();
   const [content, setContent] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!content.trim()) return;
-    show("저장 완료! AI가 정리 중이에요.", "success");
-    setTimeout(() => router.push("/"), 1200);
+    setLoading(true);
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { router.replace("/login"); return; }
+
+    const { error } = await supabase.from("items").insert({
+      user_id: user.id,
+      original_content: content.trim(),
+      content_type: "text",
+    });
+
+    setLoading(false);
+    if (error) {
+      show("저장 실패. 다시 시도해주세요.", "error");
+    } else {
+      show("저장 완료!", "success");
+      setTimeout(() => router.push("/"), 800);
+    }
   };
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
       <header className="px-4 pt-14 pb-3 flex items-center justify-between">
         <h1 className="text-[18px] font-bold text-text-primary">저장하기</h1>
         <button onClick={() => router.back()} className="p-1.5 text-text-muted">
@@ -32,15 +49,12 @@ export default function SavePage() {
         </button>
       </header>
 
-      {/* Type Selector */}
       <div className="px-5 mb-6">
         <div className="flex gap-2">
           {saveTypes.map(({ id, icon: Icon, label, href }) => (
             <button
               key={id}
-              onClick={() => {
-                if (id !== "text") router.push(href);
-              }}
+              onClick={() => { if (id !== "text") router.push(href); }}
               className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-colors ${
                 id === "text"
                   ? "bg-text-primary text-white border-text-primary"
@@ -54,7 +68,6 @@ export default function SavePage() {
         </div>
       </div>
 
-      {/* Text Input */}
       <section className="px-5 mb-6">
         <textarea
           value={content}
@@ -63,35 +76,30 @@ export default function SavePage() {
           className="w-full h-64 bg-surface-soft border border-border-light rounded-2xl p-4 text-[15px] text-text-primary leading-relaxed resize-none outline-none placeholder:text-text-placeholder focus:border-brand-purple transition-colors"
         />
         {content.trim() && (
-          <p className="text-[12px] text-text-muted mt-2 text-right">
-            {content.length}자
-          </p>
+          <p className="text-[12px] text-text-muted mt-2 text-right">{content.length}자</p>
         )}
       </section>
 
-      {/* AI Auto-categorize */}
       <section className="px-5 mb-8">
         <div className="flex items-center gap-2 text-text-muted">
           <span className="text-[14px] font-medium">카테고리 자동 추천</span>
           <Sparkles size={16} className="text-brand-purple" />
         </div>
-        <p className="text-[13px] text-text-muted mt-1">
-          저장하면 AI가 카테고리와 태그를 추천해요.
-        </p>
+        <p className="text-[13px] text-text-muted mt-1">저장하면 AI가 카테고리와 태그를 추천해요.</p>
       </section>
 
-      {/* Save Button */}
       <section className="px-5">
         <button
           onClick={handleSave}
-          className={`w-full py-4 rounded-xl text-[15px] font-semibold transition-all ${
-            content.trim()
+          disabled={!content.trim() || loading}
+          className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl text-[15px] font-semibold transition-all ${
+            content.trim() && !loading
               ? "bg-text-primary text-white active:scale-[0.98]"
               : "bg-surface-section text-text-muted"
           }`}
-          disabled={!content.trim()}
         >
-          저장하기
+          {loading && <Loader2 size={18} className="animate-spin" />}
+          {loading ? "저장 중..." : "저장하기"}
         </button>
       </section>
     </div>

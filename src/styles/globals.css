@@ -13,8 +13,6 @@ body {
     BlinkMacSystemFont, system-ui, sans-serif;
   background: #ffffff;
   color: #1a1721;
-  max-width: 430px;
-  margin: 0 auto;
   min-height: 100dvh;
   position: relative;
   -webkit-font-smoothing: antialiased;

@@ -31,8 +31,8 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="px-5 pt-14 pb-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <header className="px-5 pt-14 md:pt-8 pb-2 flex items-center justify-between">
+        <div className="flex items-center gap-2 md:hidden">
           <Image src="/logo.png" alt="Loom" width={32} height={32} className="object-contain" />
           <span className="text-[20px] font-semibold text-text-primary tracking-tight">Loom</span>
         </div>

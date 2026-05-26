@@ -33,7 +33,7 @@ export default function TabBar() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white border-t border-border-light safe-bottom z-50">
+    <nav className="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white border-t border-border-light safe-bottom z-50">
       <div className="flex items-center justify-around h-14">
         {tabs.map((tab) => {
           const active = isActive(tab.href);

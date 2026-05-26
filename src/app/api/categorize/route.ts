@@ -46,12 +46,18 @@ ${content.slice(0, 1000)}`;
       return NextResponse.json({ category: null, tags: [], error: "api_error" });
     }
     const text = json.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+    console.log("[categorize] raw text:", text);
+
     const match = text.match(/\{[\s\S]*\}/);
-    if (!match) return NextResponse.json({ category: null, tags: [] });
+    if (!match) {
+      console.error("[categorize] no JSON match in:", text);
+      return NextResponse.json({ category: null, tags: [] });
+    }
 
     const parsed = JSON.parse(match[0]);
     const category = CATEGORIES.includes(parsed.category) ? parsed.category : null;
     const tags = Array.isArray(parsed.tags) ? parsed.tags.slice(0, 3) : [];
+    console.log("[categorize] result:", JSON.stringify({ category, tags }));
 
     return NextResponse.json({ category, tags });
   } catch (e) {

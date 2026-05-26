@@ -16,6 +16,7 @@ type Item = {
   category: string | null;
   created_at: string;
   collection_item_id: string;
+  summary: string | null;
 };
 
 type Collection = {
@@ -99,7 +100,9 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
             <div key={item.collection_item_id} className="bg-white border border-border rounded-2xl p-4">
               <div className="flex gap-3">
                 <Link href={`/detail/${item.id}`} className="flex-1 min-w-0">
-                  <p className="text-[14px] text-text-primary font-medium leading-[1.6] line-clamp-3">{item.original_content}</p>
+                  <p className="text-[14px] text-text-primary font-medium leading-[1.6] line-clamp-3">
+                    {item.content_type === "image" ? (item.summary ?? "이미지") : item.original_content}
+                  </p>
                   <div className="flex items-center gap-2 mt-2">
                     {item.category && (
                       <span className="text-[11px] font-semibold text-brand-purple bg-surface-section px-2 py-0.5 rounded">{item.category}</span>

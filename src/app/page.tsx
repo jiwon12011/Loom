@@ -14,6 +14,7 @@ type Item = {
   category: string | null;
   copy_count: number;
   created_at: string;
+  summary: string | null;
 };
 
 export default function HomePage() {
@@ -30,14 +31,14 @@ export default function HomePage() {
 
       const { data: recent } = await supabase
         .from("items")
-        .select("id, original_content, content_type, category, copy_count, created_at")
+        .select("id, original_content, content_type, category, copy_count, created_at, summary")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(3);
 
       const { data: frequent } = await supabase
         .from("items")
-        .select("id, original_content, content_type, category, copy_count, created_at")
+        .select("id, original_content, content_type, category, copy_count, created_at, summary")
         .eq("user_id", user.id)
         .order("copy_count", { ascending: false })
         .limit(3);
@@ -79,7 +80,9 @@ export default function HomePage() {
       <div className={`${variant === "soft" ? "bg-surface-soft border-border-light" : "bg-white border-border"} border rounded-2xl p-4 active:scale-[0.98] transition-transform`}>
         <div className="flex gap-3">
           <div className="flex-1 min-w-0">
-            <p className="text-[14px] text-text-primary font-medium leading-relaxed line-clamp-2">{item.original_content}</p>
+            <p className="text-[14px] text-text-primary font-medium leading-relaxed line-clamp-2">
+              {item.content_type === "image" ? (item.summary ?? "이미지") : item.original_content}
+            </p>
             <div className="flex items-center gap-2 mt-2">
               {item.category && (
                 <span className="text-[11px] font-semibold text-brand-purple bg-white px-1.5 py-0.5 rounded">{item.category}</span>

@@ -178,7 +178,9 @@ export default function SearchPage() {
                         {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[14px] text-text-primary font-medium leading-[1.6] line-clamp-2">{item.original_content}</p>
+                        <p className="text-[14px] text-text-primary font-medium leading-[1.6] line-clamp-2">
+                          {item.content_type === "image" ? (item.summary ?? "이미지") : item.original_content}
+                        </p>
                         <div className="flex items-center gap-2 mt-2">
                           {item.category && (
                             <span className="text-[11px] font-semibold text-brand-purple bg-surface-section px-2 py-0.5 rounded">{item.category}</span>
@@ -193,7 +195,9 @@ export default function SearchPage() {
                     <div className="bg-white border border-border rounded-2xl p-4 active:scale-[0.98] transition-transform">
                       <div className="flex gap-3">
                         <div className="flex-1 min-w-0">
-                          <p className="text-[14px] text-text-primary font-medium leading-[1.6] line-clamp-3">{item.original_content}</p>
+                          <p className="text-[14px] text-text-primary font-medium leading-[1.6] line-clamp-3">
+                          {item.content_type === "image" ? (item.summary ?? "이미지") : item.original_content}
+                        </p>
                           <div className="flex items-center gap-2 mt-2.5">
                             {item.category && (
                               <span className="text-[11px] font-semibold text-brand-purple bg-surface-section px-2 py-0.5 rounded">{item.category}</span>

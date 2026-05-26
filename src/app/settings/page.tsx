@@ -1,40 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronRight, User, Moon, Database, CreditCard, Bell, Shield, HelpCircle, LogOut, Tags } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
-
-const settingsGroups = [
-  {
-    title: "계정",
-    items: [
-      { icon: User, label: "계정 정보", desc: "user@example.com", href: "/settings/account" },
-      { icon: CreditCard, label: "구독 관리", desc: "Free 플랜", href: "/settings/subscription" },
-    ],
-  },
-  {
-    title: "앱 설정",
-    items: [
-      { icon: Moon, label: "다크모드", desc: "시스템 설정", href: "#" },
-      { icon: Bell, label: "알림 설정", desc: "", href: "#" },
-      { icon: Tags, label: "카테고리 관리", desc: "", href: "/settings/categories" },
-      { icon: Database, label: "저장 용량", desc: "45 / 100개", href: "/settings/subscription" },
-    ],
-  },
-  {
-    title: "기타",
-    items: [
-      { icon: Shield, label: "개인정보 처리방침", desc: "", href: "#" },
-      { icon: HelpCircle, label: "도움말", desc: "", href: "#" },
-    ],
-  },
-];
+import { supabase } from "@/lib/supabase";
 
 export default function SettingsPage() {
   const router = useRouter();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [email, setEmail] = useState("");
+  const [itemCount, setItemCount] = useState(0);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      setEmail(user.email ?? "");
+      const { count } = await supabase
+        .from("items")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id);
+      setItemCount(count ?? 0);
+    };
+    load();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.replace("/onboarding");
+  };
+
+  const settingsGroups = [
+    {
+      title: "계정",
+      items: [
+        { icon: User, label: "계정 정보", desc: email || "-", href: "/settings/account" },
+        { icon: CreditCard, label: "구독 관리", desc: "Free 플랜", href: "/settings/subscription" },
+      ],
+    },
+    {
+      title: "앱 설정",
+      items: [
+        { icon: Moon, label: "다크모드", desc: "시스템 설정", href: "#" },
+        { icon: Bell, label: "알림 설정", desc: "", href: "#" },
+        { icon: Tags, label: "카테고리 관리", desc: "", href: "/settings/categories" },
+        { icon: Database, label: "저장 용량", desc: `${itemCount}개`, href: "/settings/subscription" },
+      ],
+    },
+    {
+      title: "기타",
+      items: [
+        { icon: Shield, label: "개인정보 처리방침", desc: "", href: "#" },
+        { icon: HelpCircle, label: "도움말", desc: "", href: "#" },
+      ],
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-surface-soft">
@@ -46,11 +68,13 @@ export default function SettingsPage() {
         <section className="px-5 py-4 bg-white mb-2 active:bg-surface-soft transition-colors">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-full bg-surface-section flex items-center justify-center">
-              <User size={24} className="text-text-muted" />
+              <span className="text-[22px] font-bold text-text-muted">
+                {email ? email[0].toUpperCase() : <User size={24} className="text-text-muted" />}
+              </span>
             </div>
             <div className="flex-1">
-              <p className="text-[16px] font-bold text-text-primary">사용자</p>
-              <p className="text-[13px] text-text-muted mt-0.5">Free 플랜 · 45개 저장됨</p>
+              <p className="text-[16px] font-bold text-text-primary">{email ? email.split("@")[0] : "사용자"}</p>
+              <p className="text-[13px] text-text-muted mt-0.5">Free 플랜 · {itemCount}개 저장됨</p>
             </div>
             <ChevronRight size={18} className="text-text-muted" />
           </div>
@@ -87,8 +111,7 @@ export default function SettingsPage() {
         title="로그아웃"
         message="정말 로그아웃 하시겠어요?"
         confirmLabel="로그아웃"
-        danger
-        onConfirm={() => { setShowLogoutConfirm(false); router.push("/login"); }}
+        onConfirm={handleLogout}
         onCancel={() => setShowLogoutConfirm(false)}
       />
     </div>

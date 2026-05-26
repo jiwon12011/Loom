@@ -29,6 +29,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showCollectionSheet, setShowCollectionSheet] = useState(false);
+  const [collections, setCollections] = useState<{id: string; name: string; item_count: number}[]>([]);
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -67,6 +68,26 @@ export default function DetailPage({ params }: { params: { id: string } }) {
     } else {
       navigator.clipboard.writeText(item.original_content);
       show("복사되었어요", "copy");
+    }
+  };
+
+  const openCollectionSheet = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data } = await supabase.from("collections").select("id, name, item_count").eq("user_id", user.id).order("created_at", { ascending: false });
+    setCollections(data ?? []);
+    setShowCollectionSheet(true);
+  };
+
+  const handleAddToCollection = async (collectionId: string, collectionName: string) => {
+    const { error } = await supabase.from("collection_items").insert({ collection_id: collectionId, item_id: id });
+    setShowCollectionSheet(false);
+    if (error?.code === "23505") {
+      show("이미 추가된 컬렉션이에요", "error");
+    } else if (error) {
+      show("추가 실패. 다시 시도해주세요.", "error");
+    } else {
+      show(`'${collectionName}'에 추가되었어요`, "success");
     }
   };
 
@@ -146,7 +167,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
             <Pencil size={20} className="text-text-muted" strokeWidth={1.5} />
             <span className="text-[11px] text-text-muted">수정</span>
           </Link>
-          <button onClick={() => setShowCollectionSheet(true)} className="flex flex-col items-center gap-1.5 py-2">
+          <button onClick={openCollectionSheet} className="flex flex-col items-center gap-1.5 py-2">
             <Bookmark size={20} className="text-text-muted" strokeWidth={1.5} />
             <span className="text-[11px] text-text-muted">컬렉션</span>
           </button>
@@ -162,7 +183,21 @@ export default function DetailPage({ params }: { params: { id: string } }) {
       </section>
 
       <BottomSheet open={showCollectionSheet} onClose={() => setShowCollectionSheet(false)} title="컬렉션에 추가">
-        <p className="text-[14px] text-text-muted text-center py-4">컬렉션 기능은 준비 중이에요</p>
+        {collections.length === 0 ? (
+          <p className="text-[14px] text-text-muted text-center py-4">컬렉션이 없어요. 먼저 컬렉션을 만들어주세요.</p>
+        ) : (
+          <div className="space-y-1 max-h-[50vh] overflow-y-auto">
+            {collections.map((col) => (
+              <button key={col.id} onClick={() => handleAddToCollection(col.id, col.name)}
+                className="w-full flex items-center gap-3.5 py-3.5 px-1 rounded-lg active:bg-surface-soft transition-colors">
+                <div className="flex-1 text-left">
+                  <p className="text-[15px] text-text-primary font-medium">{col.name}</p>
+                  <p className="text-[12px] text-text-muted">{col.item_count}개</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </BottomSheet>
 
       <ConfirmDialog

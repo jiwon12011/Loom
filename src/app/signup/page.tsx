@@ -31,7 +31,7 @@ export default function SignupPage() {
     if (error) {
       setError(error.message === "User already registered"
         ? "이미 가입된 이메일이에요."
-        : "회원가입 중 오류가 발생했어요. 다시 시도해주세요.");
+        : error.message);
     } else {
       setDone(true);
     }

@@ -5,6 +5,7 @@ import { Bell, Search, Copy, ChevronRight, TrendingUp, X } from "lucide-react";
 import { mockItems, categories } from "@/lib/mock-data";
 import { useToast } from "@/components/ui/Toast";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function HomePage() {
   const { show } = useToast();
@@ -31,7 +32,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="px-5 pt-14 pb-2 flex items-center justify-between">
-        <div />
+        <Image src="/logo.png" alt="Loom" width={72} height={28} className="object-contain" />
         <div className="flex items-center gap-3">
           <Link href="/notifications" className="p-2 text-text-muted relative">
             <Bell size={22} strokeWidth={1.5} />

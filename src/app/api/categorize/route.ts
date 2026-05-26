@@ -8,9 +8,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ category: null, tags: [] });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    return NextResponse.json({ category: null, tags: [], error: "no_key" });
+    return NextResponse.json({ category: null, tags: [] });
   }
 
   const prompt = `다음 텍스트를 분석해서 카테고리 1개와 태그 최대 3개를 추천해줘.
@@ -27,36 +27,35 @@ ${CATEGORIES.join(", ")}
 ${content.slice(0, 1000)}`;
 
   try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.2, maxOutputTokens: 100 },
-        }),
-      }
-    );
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "llama3-8b-8192",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.2,
+        max_tokens: 100,
+      }),
+    });
 
     const json = await res.json();
     if (!res.ok) {
-      const errMsg = json?.error?.message ?? JSON.stringify(json).slice(0, 100);
-      return NextResponse.json({ category: null, tags: [], error: "api_error", _raw: errMsg });
+      return NextResponse.json({ category: null, tags: [] });
     }
 
-    const text = json.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+    const text = json.choices?.[0]?.message?.content ?? "";
     const match = text.match(/\{[\s\S]*\}/);
-    if (!match) {
-      return NextResponse.json({ category: null, tags: [], _raw: text });
-    }
+    if (!match) return NextResponse.json({ category: null, tags: [] });
 
     const parsed = JSON.parse(match[0]);
     const category = CATEGORIES.includes(parsed.category) ? parsed.category : null;
     const tags = Array.isArray(parsed.tags) ? parsed.tags.slice(0, 3) : [];
 
     return NextResponse.json({ category, tags });
-  } catch (e: any) {
-    return NextResponse.json({ category: null, tags: [], error: e?.message ?? "exception" });
+  } catch {
+    return NextResponse.json({ category: null, tags: [] });
   }
 }

@@ -9,20 +9,29 @@ const PUBLIC_PATHS = ["/onboarding", "/login", "/signup"];
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [checked, setChecked] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session && !isPublic) {
-        router.replace("/onboarding");
-      } else {
-        setChecked(true);
-      }
-    });
+    if (isPublic) {
+      setReady(true);
+      return;
+    }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        if (session) {
+          setReady(true);
+        } else {
+          router.replace("/onboarding");
+        }
+      })
+      .catch(() => {
+        router.replace("/onboarding");
+      });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
       if (!session && !isPublic) {
         router.replace("/onboarding");
       }
@@ -31,9 +40,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, [pathname]);
 
-  if (!checked && !PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
-    return <div className="min-h-screen bg-white" />;
-  }
+  if (!ready) return <div className="min-h-screen bg-white" />;
 
   return <>{children}</>;
 }

@@ -120,9 +120,13 @@ export default function DetailPage({ params }: { params: { id: string } }) {
       </header>
 
       <section className="px-5 mb-6">
-        <h1 className="text-[22px] font-bold text-text-primary leading-[1.5] whitespace-pre-line">
-          {item.original_content}
-        </h1>
+        {item.content_type === "image" ? (
+          <img src={item.original_content} alt="저장된 이미지" className="w-full rounded-2xl object-contain max-h-96" />
+        ) : (
+          <h1 className="text-[22px] font-bold text-text-primary leading-[1.5] whitespace-pre-line">
+            {item.original_content}
+          </h1>
+        )}
       </section>
 
       {item.category && (

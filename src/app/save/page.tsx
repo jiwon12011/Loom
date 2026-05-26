@@ -44,8 +44,8 @@ export default function SavePage() {
         body: JSON.stringify({ content: content.trim() }),
       });
       const result = await res.json();
-      const { category, tags } = result;
-      show(`AI: ${category ?? "없음"} / ${tags?.join(",") || "없음"}`, "success");
+      const { category, tags, error: aiErr } = result;
+      show(`AI: ${category ?? "없음"} / ${tags?.join(",") || "없음"} [${aiErr ?? "ok"}]`, "success");
       if (category || tags?.length > 0) {
         await supabase.from("items").update({ category, tags }).eq("id", inserted.id);
       }

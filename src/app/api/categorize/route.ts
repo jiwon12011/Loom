@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
 
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    return NextResponse.json({ category: null, tags: [] });
+    return NextResponse.json({ category: null, tags: [], error: "no_key" });
   }
 
   const prompt = `다음 텍스트를 분석해서 카테고리 1개와 태그 최대 3개를 추천해줘.

@@ -1,15 +1,24 @@
 "use client";
 
-import { Bell, Search, Copy, ChevronRight, TrendingUp } from "lucide-react";
+import { useState } from "react";
+import { Bell, Search, Copy, ChevronRight, TrendingUp, X } from "lucide-react";
 import { mockItems, categories } from "@/lib/mock-data";
 import { useToast } from "@/components/ui/Toast";
 import Link from "next/link";
 
 export default function HomePage() {
   const { show } = useToast();
+  const [query, setQuery] = useState("");
 
   const recentItems = mockItems.slice(0, 3);
   const frequentItems = [...mockItems].sort((a, b) => b.copy_count - a.copy_count).slice(0, 3);
+
+  const searchResults = query.trim()
+    ? mockItems.filter((item) =>
+        item.content.toLowerCase().includes(query.toLowerCase()) ||
+        item.category?.toLowerCase().includes(query.toLowerCase())
+      )
+    : [];
 
   const handleCopy = (e: React.MouseEvent, content: string) => {
     e.preventDefault();
@@ -44,17 +53,64 @@ export default function HomePage() {
 
       {/* Search Bar */}
       <section className="px-5 mb-8">
-        <Link href="/search">
-          <div className="flex items-center gap-3 bg-surface-soft border border-border rounded-xl px-4 py-3.5">
-            <span className="text-[14px] text-text-placeholder flex-1">예) 감성적인 카피 문구</span>
-            <Search size={20} className="text-text-muted" strokeWidth={1.5} />
-          </div>
-        </Link>
+        <div className="flex items-center gap-3 bg-surface-soft border border-border rounded-xl px-4 py-3.5">
+          <Search size={20} className="text-text-muted flex-shrink-0" strokeWidth={1.5} />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="예) 감성적인 카피 문구"
+            className="flex-1 bg-transparent text-[14px] text-text-primary placeholder:text-text-placeholder outline-none"
+          />
+          {query && (
+            <button onClick={() => setQuery("")} className="text-text-muted flex-shrink-0">
+              <X size={16} />
+            </button>
+          )}
+        </div>
       </section>
 
-      {/* Recent */}
-      {(
+      {/* Inline Search Results */}
+      {query.trim() ? (
+        <section className="px-5 pb-8">
+          <p className="text-[13px] text-text-muted mb-4">검색 결과 {searchResults.length}개</p>
+          {searchResults.length > 0 ? (
+            <div className="space-y-4">
+              {searchResults.map((item) => (
+                <Link key={item.id} href={`/detail/${item.id}`}>
+                  <div className="bg-white border border-border rounded-2xl p-4 active:scale-[0.98] transition-transform">
+                    <div className="flex gap-3">
+                      {item.image_url && (
+                        <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-surface-soft">
+                          <img src={item.image_url} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[14px] text-text-primary font-medium leading-relaxed line-clamp-2">{item.content}</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-[11px] text-text-muted">{item.created_at}</span>
+                          <span className="text-[11px] text-text-muted">·</span>
+                          <span className="text-[11px] text-text-muted">{item.content_type === "text" ? "텍스트" : "이미지"}</span>
+                        </div>
+                      </div>
+                      <button className="p-2 text-text-muted hover:text-text-primary flex-shrink-0 self-start" onClick={(e) => handleCopy(e, item.content)}>
+                        <Copy size={16} strokeWidth={1.5} />
+                      </button>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-[15px] text-text-muted">검색 결과가 없어요</p>
+              <p className="text-[13px] text-text-placeholder mt-1">다른 키워드로 검색해보세요</p>
+            </div>
+          )}
+        </section>
+      ) : (
         <>
+          {/* Recent */}
           <section className="px-5 mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-[17px] font-bold text-text-primary">최근 복사</h2>

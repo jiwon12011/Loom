@@ -29,7 +29,7 @@ ${content.slice(0, 1000)}`;
 
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -42,8 +42,8 @@ ${content.slice(0, 1000)}`;
 
     const json = await res.json();
     if (!res.ok) {
-      console.error("[categorize] Gemini API error:", JSON.stringify(json));
-      return NextResponse.json({ category: null, tags: [], error: "api_error" });
+      const errMsg = json?.error?.message ?? JSON.stringify(json).slice(0, 100);
+      return NextResponse.json({ category: null, tags: [], error: "api_error", _raw: errMsg });
     }
     const text = json.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 

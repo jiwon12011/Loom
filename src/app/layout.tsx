@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "@/styles/globals.css";
 import TabBar from "@/components/layout/TabBar";
 import Sidebar from "@/components/layout/Sidebar";
+import AuthGuard from "@/components/AuthGuard";
 import { ToastProvider } from "@/components/ui/Toast";
 
 export const metadata: Metadata = {
@@ -26,13 +27,15 @@ export default function RootLayout({
     <html lang="ko">
       <body className="bg-white">
         <ToastProvider>
-          <Sidebar />
-          <div className="md:ml-56">
-            <main className="pb-20 md:pb-0 max-w-[430px] md:max-w-2xl mx-auto md:mx-0 md:px-8">
-              {children}
-            </main>
-          </div>
-          <TabBar />
+          <AuthGuard>
+            <Sidebar />
+            <div className="md:ml-56">
+              <main className="pb-20 md:pb-0 max-w-[430px] md:max-w-2xl mx-auto md:mx-0 md:px-8">
+                {children}
+              </main>
+            </div>
+            <TabBar />
+          </AuthGuard>
         </ToastProvider>
       </body>
     </html>

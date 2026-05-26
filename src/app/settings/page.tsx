@@ -1,0 +1,96 @@
+"use client";
+
+import { useState } from "react";
+import { ChevronRight, User, Moon, Database, CreditCard, Bell, Shield, HelpCircle, LogOut, Tags } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+
+const settingsGroups = [
+  {
+    title: "계정",
+    items: [
+      { icon: User, label: "계정 정보", desc: "user@example.com", href: "/settings/account" },
+      { icon: CreditCard, label: "구독 관리", desc: "Free 플랜", href: "/settings/subscription" },
+    ],
+  },
+  {
+    title: "앱 설정",
+    items: [
+      { icon: Moon, label: "다크모드", desc: "시스템 설정", href: "#" },
+      { icon: Bell, label: "알림 설정", desc: "", href: "#" },
+      { icon: Tags, label: "카테고리 관리", desc: "", href: "/settings/categories" },
+      { icon: Database, label: "저장 용량", desc: "45 / 100개", href: "/settings/subscription" },
+    ],
+  },
+  {
+    title: "기타",
+    items: [
+      { icon: Shield, label: "개인정보 처리방침", desc: "", href: "#" },
+      { icon: HelpCircle, label: "도움말", desc: "", href: "#" },
+    ],
+  },
+];
+
+export default function SettingsPage() {
+  const router = useRouter();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-surface-soft">
+      <header className="px-5 pt-14 pb-3 bg-white">
+        <h1 className="text-[20px] font-bold text-text-primary">설정</h1>
+      </header>
+
+      <Link href="/settings/account">
+        <section className="px-5 py-4 bg-white mb-2 active:bg-surface-soft transition-colors">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full bg-surface-section flex items-center justify-center">
+              <User size={24} className="text-text-muted" />
+            </div>
+            <div className="flex-1">
+              <p className="text-[16px] font-bold text-text-primary">사용자</p>
+              <p className="text-[13px] text-text-muted mt-0.5">Free 플랜 · 45개 저장됨</p>
+            </div>
+            <ChevronRight size={18} className="text-text-muted" />
+          </div>
+        </section>
+      </Link>
+
+      {settingsGroups.map((group) => (
+        <section key={group.title} className="bg-white mb-2">
+          <p className="px-5 pt-4 pb-2 text-[12px] font-semibold text-text-muted uppercase tracking-wider">{group.title}</p>
+          {group.items.map(({ icon: Icon, label, desc, href }) => (
+            <Link key={label} href={href}>
+              <div className="w-full flex items-center gap-4 px-5 py-3.5 active:bg-surface-soft transition-colors">
+                <Icon size={20} className="text-text-muted" strokeWidth={1.5} />
+                <span className="flex-1 text-left text-[15px] text-text-primary">{label}</span>
+                {desc && <span className="text-[13px] text-text-muted">{desc}</span>}
+                <ChevronRight size={16} className="text-text-placeholder" />
+              </div>
+            </Link>
+          ))}
+        </section>
+      ))}
+
+      <section className="bg-white mt-2 mb-8">
+        <button onClick={() => setShowLogoutConfirm(true)} className="w-full flex items-center gap-4 px-5 py-4 active:bg-surface-soft transition-colors">
+          <LogOut size={20} className="text-red-400" strokeWidth={1.5} />
+          <span className="text-[15px] text-red-400">로그아웃</span>
+        </button>
+      </section>
+
+      <p className="text-center text-[12px] text-text-placeholder pb-8">Loom v1.0.0</p>
+
+      <ConfirmDialog
+        open={showLogoutConfirm}
+        title="로그아웃"
+        message="정말 로그아웃 하시겠어요?"
+        confirmLabel="로그아웃"
+        danger
+        onConfirm={() => { setShowLogoutConfirm(false); router.push("/login"); }}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
+    </div>
+  );
+}

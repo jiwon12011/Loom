@@ -25,19 +25,33 @@ export default function SavePage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { router.replace("/login"); return; }
 
-    const { error } = await supabase.from("items").insert({
+    const { data: inserted, error } = await supabase.from("items").insert({
       user_id: user.id,
       original_content: content.trim(),
       content_type: "text",
-    });
+    }).select("id").single();
+
+    if (error || !inserted) {
+      setLoading(false);
+      show("저장 실패. 다시 시도해주세요.", "error");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/categorize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: content.trim() }),
+      });
+      const { category, tags } = await res.json();
+      if (category || tags?.length > 0) {
+        await supabase.from("items").update({ category, tags }).eq("id", inserted.id);
+      }
+    } catch { /* AI 실패해도 저장은 유지 */ }
 
     setLoading(false);
-    if (error) {
-      show("저장 실패. 다시 시도해주세요.", "error");
-    } else {
-      show("저장 완료!", "success");
-      setTimeout(() => router.push("/"), 800);
-    }
+    show("저장 완료!", "success");
+    setTimeout(() => router.push("/"), 800);
   };
 
   return (

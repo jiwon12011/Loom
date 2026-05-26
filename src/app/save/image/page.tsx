@@ -44,21 +44,40 @@ export default function SaveImagePage() {
 
     const { data: { publicUrl } } = supabase.storage.from("images").getPublicUrl(path);
 
-    const { error: insertError } = await supabase.from("items").insert({
+    const { data: inserted, error: insertError } = await supabase.from("items").insert({
       user_id: user.id,
       original_content: publicUrl,
       content_type: "image",
       category: null,
-      tags: memo.trim() ? [memo.trim()] : [],
-    });
+      tags: [],
+    }).select("id").single();
+
+    if (insertError || !inserted) {
+      setSaving(false);
+      show("저장 실패. 다시 시도해주세요.", "error");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/analyze-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageUrl: publicUrl }),
+      });
+      const { category, tags, extractedText, summary } = await res.json();
+      const updateData: Record<string, any> = {};
+      if (category) updateData.category = category;
+      if (tags?.length > 0) updateData.tags = tags;
+      const parts = [extractedText, summary, memo.trim()].filter(Boolean);
+      if (parts.length > 0) updateData.summary = parts.join("\n\n");
+      if (Object.keys(updateData).length > 0) {
+        await supabase.from("items").update(updateData).eq("id", inserted.id);
+      }
+    } catch { /* AI 실패해도 저장은 유지 */ }
 
     setSaving(false);
-    if (insertError) {
-      show("저장 실패. 다시 시도해주세요.", "error");
-    } else {
-      show("이미지 저장 완료!", "success");
-      setTimeout(() => router.push("/"), 800);
-    }
+    show("이미지 저장 완료!", "success");
+    setTimeout(() => router.push("/"), 800);
   };
 
   return (

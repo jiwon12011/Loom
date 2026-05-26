@@ -32,7 +32,10 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="px-5 pt-14 pb-2 flex items-center justify-between">
-        <Image src="/logo.png" alt="Loom" width={72} height={28} className="object-contain" />
+        <div className="flex items-center gap-2">
+          <Image src="/logo.png" alt="Loom" width={32} height={32} className="object-contain" />
+          <span className="text-[20px] font-semibold text-text-primary tracking-tight">Loom</span>
+        </div>
         <div className="flex items-center gap-3">
           <Link href="/notifications" className="p-2 text-text-muted relative">
             <Bell size={22} strokeWidth={1.5} />

@@ -10,7 +10,8 @@ export async function POST(req: NextRequest) {
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return NextResponse.json({ category: null, tags: [] });
+    console.error("[categorize] GEMINI_API_KEY not set");
+    return NextResponse.json({ category: null, tags: [], error: "no_key" });
   }
 
   const prompt = `다음 텍스트를 분석해서 카테고리 1개와 태그 최대 3개를 추천해줘.
@@ -40,6 +41,10 @@ ${content.slice(0, 1000)}`;
     );
 
     const json = await res.json();
+    if (!res.ok) {
+      console.error("[categorize] Gemini API error:", JSON.stringify(json));
+      return NextResponse.json({ category: null, tags: [], error: "api_error" });
+    }
     const text = json.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
     const match = text.match(/\{[\s\S]*\}/);
     if (!match) return NextResponse.json({ category: null, tags: [] });
@@ -49,7 +54,8 @@ ${content.slice(0, 1000)}`;
     const tags = Array.isArray(parsed.tags) ? parsed.tags.slice(0, 3) : [];
 
     return NextResponse.json({ category, tags });
-  } catch {
-    return NextResponse.json({ category: null, tags: [] });
+  } catch (e) {
+    console.error("[categorize] exception:", e);
+    return NextResponse.json({ category: null, tags: [], error: "exception" });
   }
 }

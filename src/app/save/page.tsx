@@ -43,11 +43,16 @@ export default function SavePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: content.trim() }),
       });
-      const { category, tags } = await res.json();
+      const result = await res.json();
+      const { category, tags } = result;
+      show(`AI: ${category ?? "없음"} / ${tags?.join(", ") || "태그없음"}`, "success");
       if (category || tags?.length > 0) {
-        await supabase.from("items").update({ category, tags }).eq("id", inserted.id);
+        const { error: updateError } = await supabase.from("items").update({ category, tags }).eq("id", inserted.id);
+        if (updateError) show(`업데이트 실패: ${updateError.message}`, "error");
       }
-    } catch { /* AI 실패해도 저장은 유지 */ }
+    } catch (e: any) {
+      show(`AI 오류: ${e?.message ?? "unknown"}`, "error");
+    }
 
     setLoading(false);
     show("저장 완료!", "success");

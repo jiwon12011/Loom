@@ -1,15 +1,43 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeft, Mail, Calendar, Database, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Mail, Calendar, Database, Trash2, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useToast } from "@/components/ui/Toast";
+import { supabase } from "@/lib/supabase";
 
 export default function AccountPage() {
   const router = useRouter();
   const { show } = useToast();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [email, setEmail] = useState("");
+  const [joinedAt, setJoinedAt] = useState("");
+  const [itemCount, setItemCount] = useState(0);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      setEmail(user.email ?? "");
+      setJoinedAt(new Date(user.created_at).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" }));
+      const { count } = await supabase.from("items").select("id", { count: "exact", head: true }).eq("user_id", user.id);
+      setItemCount(count ?? 0);
+    };
+    load();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.replace("/onboarding");
+  };
+
+  const handlePasswordReset = async () => {
+    if (!email) return;
+    await supabase.auth.resetPasswordForEmail(email);
+    show("비밀번호 변경 이메일을 발송했어요", "success");
+  };
 
   return (
     <div className="min-h-screen bg-surface-soft">
@@ -22,16 +50,17 @@ export default function AccountPage() {
 
       <section className="bg-white mt-2 px-5 py-6 flex flex-col items-center">
         <div className="w-20 h-20 rounded-full bg-surface-section flex items-center justify-center mb-4">
-          <span className="text-[28px] font-bold text-text-muted">U</span>
+          <span className="text-[28px] font-bold text-text-muted">
+            {email ? email[0].toUpperCase() : "U"}
+          </span>
         </div>
-        <button className="text-[13px] text-brand-purple font-semibold">프로필 사진 변경</button>
       </section>
 
       <section className="bg-white mt-2">
         {[
-          { icon: Mail, label: "이메일", value: "user@example.com" },
-          { icon: Calendar, label: "가입일", value: "2024년 3월 15일" },
-          { icon: Database, label: "저장된 아이템", value: "45개" },
+          { icon: Mail, label: "이메일", value: email || "-" },
+          { icon: Calendar, label: "가입일", value: joinedAt || "-" },
+          { icon: Database, label: "저장된 아이템", value: `${itemCount}개` },
         ].map(({ icon: Icon, label, value }) => (
           <div key={label} className="flex items-center gap-4 px-5 py-4 border-b border-border-light last:border-0">
             <Icon size={20} className="text-text-muted" strokeWidth={1.5} />
@@ -44,12 +73,16 @@ export default function AccountPage() {
       </section>
 
       <section className="bg-white mt-2">
-        <button
-          onClick={() => show("비밀번호 변경 이메일을 발송했어요", "success")}
-          className="w-full px-5 py-4 text-left active:bg-surface-soft transition-colors"
-        >
+        <button onClick={handlePasswordReset} className="w-full px-5 py-4 text-left active:bg-surface-soft transition-colors">
           <p className="text-[15px] text-text-primary">비밀번호 변경</p>
           <p className="text-[13px] text-text-muted mt-0.5">이메일로 비밀번호 재설정 링크를 보내드려요</p>
+        </button>
+      </section>
+
+      <section className="bg-white mt-2">
+        <button onClick={() => setShowLogoutConfirm(true)} className="w-full flex items-center gap-4 px-5 py-4 active:bg-surface-soft transition-colors">
+          <LogOut size={20} className="text-text-muted" strokeWidth={1.5} />
+          <p className="text-[15px] text-text-primary">로그아웃</p>
         </button>
       </section>
 
@@ -62,6 +95,15 @@ export default function AccountPage() {
           </div>
         </button>
       </section>
+
+      <ConfirmDialog
+        open={showLogoutConfirm}
+        title="로그아웃"
+        message="로그아웃 하시겠어요?"
+        confirmLabel="로그아웃"
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
 
       <ConfirmDialog
         open={showDeleteConfirm}

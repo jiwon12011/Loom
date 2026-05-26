@@ -13,19 +13,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ category: null, tags: [], error: "no_key" });
   }
 
-  const prompt = `다음 텍스트를 분석해서 카테고리 1개와 태그 최대 3개를 추천해줘.
-
-카테고리는 반드시 아래 중 하나만 선택해:
-${CATEGORIES.join(", ")}
-
-태그는 텍스트의 핵심 키워드로, 2~5글자 단어로 3개 이하.
-
-반드시 아래 JSON 형식으로만 응답해. 다른 말은 하지 마:
-{"category": "카테고리명", "tags": ["태그1", "태그2"]}
-
-텍스트:
-${content.slice(0, 1000)}`;
-
   try {
     const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -35,27 +22,36 @@ ${content.slice(0, 1000)}`;
       },
       body: JSON.stringify({
         model: "llama3-8b-8192",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.2,
+        response_format: { type: "json_object" },
+        messages: [
+          {
+            role: "system",
+            content: `You are a text classifier. Always respond with valid JSON only: {"category": "...", "tags": [...]}`,
+          },
+          {
+            role: "user",
+            content: `Classify this text. Choose category from: ${CATEGORIES.join(", ")}. Add up to 3 short tags (Korean words). Respond only with JSON.
+
+Text: ${content.slice(0, 1000)}`,
+          },
+        ],
+        temperature: 0.1,
         max_tokens: 100,
       }),
     });
 
     const json = await res.json();
     if (!res.ok) {
-      return NextResponse.json({ category: null, tags: [] });
+      return NextResponse.json({ category: null, tags: [], error: "api_error", _raw: json?.error?.message });
     }
 
     const text = json.choices?.[0]?.message?.content ?? "";
-    const match = text.match(/\{[\s\S]*\}/);
-    if (!match) return NextResponse.json({ category: null, tags: [] });
-
-    const parsed = JSON.parse(match[0]);
+    const parsed = JSON.parse(text);
     const category = CATEGORIES.includes(parsed.category) ? parsed.category : null;
     const tags = Array.isArray(parsed.tags) ? parsed.tags.slice(0, 3) : [];
 
-    return NextResponse.json({ category, tags });
-  } catch {
-    return NextResponse.json({ category: null, tags: [] });
+    return NextResponse.json({ category, tags, _raw: text.slice(0, 80) });
+  } catch (e: any) {
+    return NextResponse.json({ category: null, tags: [], error: e?.message ?? "exception" });
   }
 }

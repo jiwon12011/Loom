@@ -15,6 +15,7 @@ type Item = {
   category: string | null;
   copy_count: number;
   created_at: string;
+  summary: string | null;
 };
 
 const FILTERS = [
@@ -43,7 +44,7 @@ export default function SearchPage() {
     if (!user) { router.replace("/login"); return; }
     const { data } = await supabase
       .from("items")
-      .select("id, original_content, content_type, category, copy_count, created_at")
+      .select("id, original_content, content_type, category, copy_count, created_at, summary")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(200);
@@ -55,7 +56,8 @@ export default function SearchPage() {
     .filter(i => activeFilter === "all" || i.content_type === activeFilter)
     .filter(i => !query.trim() ||
       i.original_content.toLowerCase().includes(query.toLowerCase()) ||
-      i.category?.toLowerCase().includes(query.toLowerCase()));
+      i.category?.toLowerCase().includes(query.toLowerCase()) ||
+      i.summary?.toLowerCase().includes(query.toLowerCase()));
 
   const toggleSelect = (id: string) => {
     setSelected(prev => {

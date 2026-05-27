@@ -140,7 +140,7 @@ function SearchContent() {
   const handleCopy = async (e: React.MouseEvent, item: typeof allItems[0]) => {
     e.preventDefault();
     e.stopPropagation();
-    const text = item.content_type === "link" ? item.original_content.split("\n")[0] : item.original_content;
+    const text = item.content_type === "link" ? (item.original_content ?? "").split("\n")[0] : (item.original_content ?? "");
     try {
       await navigator.clipboard.writeText(text);
       show("복사 완료", "copy");

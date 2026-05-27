@@ -49,10 +49,12 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
         .order("created_at", { ascending: false }),
     ]);
 
-    const mapped = (colItems ?? []).map((ci: any) => ({
-      ...ci.items,
-      collection_item_id: ci.id,
-    }));
+    const mapped = (colItems ?? [])
+      .filter((ci: any) => ci.items)
+      .map((ci: any) => ({
+        ...ci.items,
+        collection_item_id: ci.id,
+      }));
     setCollection(col ? { ...col, item_count: mapped.length } : col);
     setItems(mapped);
     setLoading(false);

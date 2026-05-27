@@ -41,8 +41,12 @@ export default function AccountPage() {
 
   const handlePasswordReset = async () => {
     if (!email) return;
-    await supabase.auth.resetPasswordForEmail(email);
-    show("비밀번호 변경 이메일을 발송했어요", "success");
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    if (error) {
+      show("발송 실패. 다시 시도해주세요.", "error");
+    } else {
+      show("비밀번호 변경 이메일을 발송했어요", "success");
+    }
   };
 
   const handleSelectProfileIcon = (iconId: string) => {

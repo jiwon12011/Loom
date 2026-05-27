@@ -66,10 +66,16 @@ export default function DetailPage({ params }: { params: { id: string } }) {
     fetchItem();
   }, [id]);
 
+  const getCopyText = () => {
+    if (!item) return "";
+    if (item.content_type === "link") return item.original_content.split("\n")[0];
+    return item.original_content;
+  };
+
   const handleCopy = async () => {
     if (!item) return;
     try {
-      await navigator.clipboard.writeText(copyText);
+      await navigator.clipboard.writeText(getCopyText());
       show("복사 완료", "copy");
     } catch {
       show("복사에 실패했어요", "error");
@@ -84,12 +90,13 @@ export default function DetailPage({ params }: { params: { id: string } }) {
 
   const handleShare = async () => {
     if (!item) return;
+    const text = getCopyText();
     if (navigator.share) {
-      try { await navigator.share({ text: copyText }); }
+      try { await navigator.share({ text }); }
       catch { /* user cancelled */ }
     } else {
       try {
-        await navigator.clipboard.writeText(copyText);
+        await navigator.clipboard.writeText(text);
         show("복사되었어요", "copy");
       } catch {
         show("공유에 실패했어요", "error");
@@ -156,8 +163,6 @@ export default function DetailPage({ params }: { params: { id: string } }) {
   const linkMemo = isLink
     ? item.original_content.split("\n").find(l => l.startsWith("[메모]"))?.replace("[메모] ", "") || null
     : null;
-  const copyText = isLink && linkUrl ? linkUrl : item.original_content;
-
   const getTypeLabel = (type: string) => {
     if (type === "mixed") return "텍스트+이미지";
     if (type === "image") return "이미지";

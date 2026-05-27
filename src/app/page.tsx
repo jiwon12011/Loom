@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Bell, Search, Copy, ChevronRight, TrendingUp, FileText, Image as ImageIcon, Link2 } from "lucide-react";
+import { Bell, Search, Copy, ChevronRight, TrendingUp, X, FileText, Image as ImageIcon, Link2 } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { PROFILE_ICON_STORAGE_KEY, getProfileIcon } from "@/lib/profile-icons";
 
@@ -21,12 +20,13 @@ type Item = {
 
 export default function HomePage() {
   const { show } = useToast();
-  const router = useRouter();
   const [query, setQuery] = useState("");
-  const [recentItems, setRecentItems] = useState<Item[]>([]);
-  const [frequentItems, setFrequentItems] = useState<Item[]>([]);
+  const [allItems, setAllItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [profileIconId, setProfileIconId] = useState<string | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [aiResultIds, setAiResultIds] = useState<string[]>([]);
+  const [searchMode, setSearchMode] = useState<"ai" | "local" | null>(null);
 
   useEffect(() => {
     setProfileIconId(localStorage.getItem(PROFILE_ICON_STORAGE_KEY));
@@ -37,29 +37,74 @@ export default function HomePage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data: recent } = await supabase
+      const { data } = await supabase
         .from("items")
         .select("id, original_content, content_type, category, copy_count, created_at, summary")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
-        .limit(3);
+        .limit(200);
 
-      const { data: frequent } = await supabase
-        .from("items")
-        .select("id, original_content, content_type, category, copy_count, created_at, summary")
-        .eq("user_id", user.id)
-        .order("copy_count", { ascending: false })
-        .limit(3);
-
-      setRecentItems(recent ?? []);
-      setFrequentItems(frequent ?? []);
+      setAllItems(data ?? []);
       setLoading(false);
     };
 
     fetchItems();
   }, []);
 
+  useEffect(() => {
+    const trimmed = query.trim();
+    if (!trimmed) {
+      setAiResultIds([]);
+      setSearchMode(null);
+      setSearching(false);
+      return;
+    }
+
+    const timer = window.setTimeout(async () => {
+      setSearching(true);
+      try {
+        const res = await fetch("/api/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: trimmed,
+            items: allItems.map(({ id, original_content, content_type, category, summary }) => ({
+              id, original_content, content_type, category, summary,
+            })),
+          }),
+        });
+        const json = await res.json();
+        setAiResultIds(Array.isArray(json.ids) ? json.ids : []);
+        setSearchMode(json.mode === "ai" ? "ai" : "local");
+      } catch {
+        setAiResultIds([]);
+        setSearchMode("local");
+      } finally {
+        setSearching(false);
+      }
+    }, 350);
+
+    return () => window.clearTimeout(timer);
+  }, [query, allItems]);
+
   const profileIcon = getProfileIcon(profileIconId);
+
+  const recentItems = allItems.slice(0, 3);
+  const frequentItems = [...allItems].sort((a, b) => b.copy_count - a.copy_count).slice(0, 3);
+
+  const locallyFiltered = allItems.filter(i =>
+    i.original_content.toLowerCase().includes(query.toLowerCase()) ||
+    i.category?.toLowerCase().includes(query.toLowerCase()) ||
+    i.summary?.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const aiRanked = aiResultIds
+    .map((id) => allItems.find((item) => item.id === id))
+    .filter((item): item is Item => Boolean(item));
+
+  const searchResults = query.trim()
+    ? (aiResultIds.length > 0 ? aiRanked : locallyFiltered)
+    : [];
 
   const handleCopy = (e: React.MouseEvent, content: string) => {
     e.preventDefault();
@@ -100,11 +145,7 @@ export default function HomePage() {
         <div className="flex gap-3.5">
           {item.content_type === "image" && canPreviewImage(item.original_content) ? (
             <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-surface-section border border-border-light">
-              <img
-                src={item.original_content}
-                alt=""
-                className="w-full h-full object-cover"
-              />
+              <img src={item.original_content} alt="" className="w-full h-full object-cover" />
             </div>
           ) : (
             <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-surface-section border border-border-light text-brand-purple">
@@ -174,23 +215,47 @@ export default function HomePage() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => router.push(query.trim() ? `/search?q=${encodeURIComponent(query)}` : "/search")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && query.trim()) {
-                router.push(`/search?q=${encodeURIComponent(query)}`);
-              }
-            }}
             placeholder="그때 저장했던 릴스 뭐였지?"
             className="flex-1 bg-transparent text-[15px] text-text-primary placeholder:text-text-muted outline-none"
           />
+          {query && (
+            <button onClick={() => setQuery("")} className="text-text-muted flex-shrink-0">
+              <X size={16} />
+            </button>
+          )}
         </div>
       </section>
 
-      {loading ? (
+      {query.trim() ? (
+        <section className="relative z-10 px-5 pb-8">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-[13px] text-text-muted">검색 결과 {searching ? "..." : `${searchResults.length}개`}</p>
+            {query.trim() && (
+              <span className="text-[12px] font-semibold text-brand-purple">
+                {searching ? "AI 검색 중..." : searchMode === "ai" ? "AI 검색" : "기본 검색"}
+              </span>
+            )}
+          </div>
+          {searching ? (
+            <div className="flex justify-center pt-8">
+              <div className="w-6 h-6 border-2 border-brand-purple border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : searchResults.length > 0 ? (
+            <div className="space-y-3">
+              {searchResults.map((item) => <ItemCard key={item.id} item={item} />)}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-[15px] text-text-muted">검색 결과가 없어요</p>
+              <p className="text-[13px] text-text-placeholder mt-1">다른 키워드로 검색해보세요</p>
+            </div>
+          )}
+        </section>
+      ) : loading ? (
         <div className="relative z-10 flex justify-center pt-20">
           <div className="w-6 h-6 border-2 border-brand-purple border-t-transparent rounded-full animate-spin" />
         </div>
-      ) : recentItems.length === 0 ? (
+      ) : allItems.length === 0 ? (
         <div className="relative z-10 text-center py-20 px-8">
           <p className="text-[18px] font-bold text-text-primary mb-2">아직 저장된 항목이 없어요</p>
           <p className="text-[14px] text-text-muted mb-8">아래 + 버튼을 눌러 첫 번째 기억을 저장해보세요</p>
@@ -229,4 +294,3 @@ export default function HomePage() {
     </div>
   );
 }
-

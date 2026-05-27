@@ -255,8 +255,8 @@ export default function SearchPage() {
                     </div>
                   </button>
                 ) : (
-                  <Link key={item.id} href={`/detail/${item.id}`}>
-                    <div className="bg-white border border-border rounded-2xl p-4 active:scale-[0.98] transition-transform">
+                  <Link key={item.id} href={`/detail/${item.id}`} className="block">
+                    <div className="bg-white border border-border rounded-2xl px-4 py-5 active:scale-[0.98] transition-transform">
                       <div className="flex gap-3">
                         <div className="flex-1 min-w-0">
                           <p className="text-[14px] text-text-primary font-medium leading-[1.6] line-clamp-3">

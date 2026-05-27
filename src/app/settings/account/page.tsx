@@ -8,7 +8,7 @@ import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import BottomSheet from "@/components/ui/BottomSheet";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
-import { PROFILE_ICONS, PROFILE_ICON_STORAGE_KEY, getProfileIcon } from "@/lib/profile-icons";
+import { PROFILE_ICONS, PROFILE_ICON_STORAGE_KEY, PROFILE_THEME_EVENT, getProfileIcon } from "@/lib/profile-icons";
 
 export default function AccountPage() {
   const router = useRouter();
@@ -47,6 +47,7 @@ export default function AccountPage() {
 
   const handleSelectProfileIcon = (iconId: string) => {
     localStorage.setItem(PROFILE_ICON_STORAGE_KEY, iconId);
+    window.dispatchEvent(new Event(PROFILE_THEME_EVENT));
     setProfileIconId(iconId);
     setShowIconPicker(false);
     show("프로필 아이콘이 변경되었어요", "success");

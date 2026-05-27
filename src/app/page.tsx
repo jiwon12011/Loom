@@ -141,8 +141,10 @@ export default function HomePage() {
   );
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="px-5 pt-14 pb-2 flex items-center justify-between">
+    <div className="relative min-h-screen overflow-hidden bg-white">
+      <div className="pointer-events-none absolute -left-40 -top-52 h-[430px] w-[430px] rounded-full bg-[var(--profile-soft)] transition-colors" />
+      <div className="pointer-events-none absolute -left-28 top-28 h-[360px] w-[220px] rounded-[100%] bg-[var(--profile-soft)] opacity-45 blur-2xl transition-colors" />
+      <header className="relative z-10 px-5 pt-14 pb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Image src="/logo.png" alt="Loom" width={32} height={32} className="object-contain" />
           <span className="text-[20px] font-semibold text-text-primary tracking-tight">Loom</span>
@@ -159,12 +161,12 @@ export default function HomePage() {
         </div>
       </header>
 
-      <section className="px-5 pt-3 pb-7">
+      <section className="relative z-10 px-5 pt-3 pb-7">
         <h1 className="text-[35px] font-bold text-text-primary leading-[1.12]">기억을 검색해보세요</h1>
         <p className="text-[15px] text-text-secondary mt-3 leading-[1.6]">자연어로 검색하면, 관련된 기억을<br />빠르게 찾아드려요</p>
       </section>
 
-      <section className="px-5 mb-7">
+      <section className="relative z-10 px-5 mb-7">
         <div className="flex min-h-[64px] items-center gap-3.5 bg-white border border-border-light rounded-2xl px-5 py-4 shadow-elevated transition-all focus-within:border-brand-purple/45 focus-within:shadow-[0_8px_24px_rgba(45,42,51,0.08)]">
           <Search size={21} className="text-text-secondary flex-shrink-0" strokeWidth={1.8} />
           <input
@@ -183,7 +185,7 @@ export default function HomePage() {
       </section>
 
       {query.trim() ? (
-        <section className="px-5 pb-8">
+        <section className="relative z-10 px-5 pb-8">
           <p className="text-[13px] text-text-muted mb-4">검색 결과 {searchResults.length}개</p>
           {searchResults.length > 0 ? (
             <div className="space-y-3">
@@ -197,11 +199,11 @@ export default function HomePage() {
           )}
         </section>
       ) : loading ? (
-        <div className="flex justify-center pt-20">
+        <div className="relative z-10 flex justify-center pt-20">
           <div className="w-6 h-6 border-2 border-brand-purple border-t-transparent rounded-full animate-spin" />
         </div>
       ) : recentItems.length === 0 ? (
-        <div className="text-center py-20 px-8">
+        <div className="relative z-10 text-center py-20 px-8">
           <p className="text-[18px] font-bold text-text-primary mb-2">아직 저장된 항목이 없어요</p>
           <p className="text-[14px] text-text-muted mb-8">아래 + 버튼을 눌러 첫 번째 기억을 저장해보세요</p>
           <Link href="/save" className="inline-flex items-center gap-2 bg-brand-purple text-white px-6 py-3 rounded-xl text-[14px] font-semibold">
@@ -210,7 +212,7 @@ export default function HomePage() {
         </div>
       ) : (
         <>
-          <section className="px-5 mb-8">
+          <section className="relative z-10 px-5 mb-8">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-[17px] font-bold text-text-primary">최근 저장</h2>
               <Link href="/search" className="flex items-center text-[13px] text-text-muted">전체보기 <ChevronRight size={14} /></Link>
@@ -221,7 +223,7 @@ export default function HomePage() {
           </section>
 
           {frequentItems.some(i => i.copy_count > 0) && (
-            <section className="px-5 mb-8">
+            <section className="relative z-10 px-5 mb-8">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <h2 className="text-[17px] font-bold text-text-primary">자주 복사</h2>

@@ -18,6 +18,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+:root {
+  --profile-accent: #46a7f2;
+  --profile-soft: #e9f4ff;
+  --profile-glow: rgba(70, 167, 242, 0.26);
+}
+
 @media (min-width: 768px) {
   .phone-screen .min-h-screen {
     min-height: 100%;

@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import TabBar from "@/components/layout/TabBar";
 import AuthGuard from "@/components/AuthGuard";
 import { ToastProvider } from "@/components/ui/Toast";
+import ProfileThemeSync from "@/components/ProfileThemeSync";
 
 export const metadata: Metadata = {
   title: "Loom - AI 개인 아카이브",
@@ -26,6 +27,7 @@ export default function RootLayout({
     <html lang="ko">
       <body className="bg-white md:bg-[#F4F1F7]">
         <ToastProvider>
+          <ProfileThemeSync />
           <AuthGuard>
             <div className="min-h-dvh md:flex md:items-center md:justify-center md:p-6">
               <div className="phone-frame relative w-full max-w-[430px] md:h-[min(860px,calc(100dvh-48px))] md:rounded-[46px] md:bg-[#171421] md:p-3 md:shadow-[0_28px_80px_rgba(35,28,52,0.24)]">

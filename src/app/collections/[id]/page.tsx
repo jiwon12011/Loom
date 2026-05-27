@@ -114,14 +114,14 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-surface flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <Loader2 size={24} className="animate-spin text-brand-purple" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen bg-white">
       <header className="px-5 pt-14 pb-3 flex items-center justify-between">
         <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
@@ -146,7 +146,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
       ) : (
         <div className="px-5 space-y-3 pb-24">
           {items.map((item) => (
-            <div key={item.collection_item_id} className="bg-surface border border-border rounded-2xl p-4">
+            <div key={item.collection_item_id} className="bg-white border border-border rounded-2xl p-4">
               <div className="flex gap-3">
                 <Link href={`/detail/${item.id}`} className="flex-1 min-w-0">
                   <p className="text-[15px] text-text-primary font-medium leading-[1.6] line-clamp-3">

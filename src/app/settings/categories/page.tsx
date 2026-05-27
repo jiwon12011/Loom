@@ -164,7 +164,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="min-h-screen bg-surface-soft">
-      <header className="px-5 pt-14 pb-3 flex items-center justify-between bg-surface">
+      <header className="px-5 pt-14 pb-3 flex items-center justify-between bg-white">
         <div className="flex items-center gap-3">
           <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
             <ArrowLeft size={22} strokeWidth={1.5} />
@@ -176,12 +176,12 @@ export default function CategoriesPage() {
         </button>
       </header>
 
-      <p className="px-5 py-3 text-[13px] text-text-muted bg-surface border-b border-border-light">
+      <p className="px-5 py-3 text-[13px] text-text-muted bg-white border-b border-border-light">
         카테고리를 추가하거나 이름을 변경할 수 있어요.
       </p>
 
       {adding && (
-        <div className="bg-surface border-b border-border-light px-5 py-3 flex items-center gap-3">
+        <div className="bg-white border-b border-border-light px-5 py-3 flex items-center gap-3">
           <input
             type="text"
             value={newName}
@@ -200,7 +200,7 @@ export default function CategoriesPage() {
         </div>
       )}
 
-      <div className="bg-surface mt-2">
+      <div className="bg-white mt-2">
         {categories.map((cat) => (
           <div
             key={cat.id}

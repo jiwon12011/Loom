@@ -9,8 +9,6 @@ import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { supabase } from "@/lib/supabase";
 import { PROFILE_ICON_STORAGE_KEY, getProfileIcon } from "@/lib/profile-icons";
 import { useToast } from "@/components/ui/Toast";
-import { getStoredTheme, setStoredTheme, getThemeLabel, type ThemeMode } from "@/lib/theme";
-import BottomSheet from "@/components/ui/BottomSheet";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -19,8 +17,6 @@ export default function SettingsPage() {
   const [email, setEmail] = useState("");
   const [itemCount, setItemCount] = useState(0);
   const [profileIconId, setProfileIconId] = useState<string | null>(null);
-  const [themeMode, setThemeMode] = useState<ThemeMode>("system");
-  const [showThemePicker, setShowThemePicker] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -33,7 +29,6 @@ export default function SettingsPage() {
         .eq("user_id", user.id);
       setItemCount(count ?? 0);
       setProfileIconId(localStorage.getItem(PROFILE_ICON_STORAGE_KEY));
-      setThemeMode(getStoredTheme());
     };
     load();
   }, []);
@@ -60,7 +55,7 @@ export default function SettingsPage() {
     {
       title: "앱 설정",
       items: [
-        { icon: Moon, label: "다크모드", desc: getThemeLabel(themeMode), onTap: () => setShowThemePicker(true) },
+        { icon: Moon, label: "다크모드", desc: "시스템 설정", onTap: () => handleComingSoon("다크모드") },
         { icon: Bell, label: "알림 설정", desc: "", onTap: () => handleComingSoon("알림 설정") },
         { icon: Tags, label: "카테고리 관리", desc: "", href: "/settings/categories" },
         { icon: Database, label: "저장 용량", desc: `${itemCount}개`, href: "/settings/subscription" },
@@ -77,12 +72,12 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-surface-soft">
-      <header className="px-5 pt-14 pb-3 bg-surface">
+      <header className="px-5 pt-14 pb-3 bg-white">
         <h1 className="text-[20px] font-bold text-text-primary">설정</h1>
       </header>
 
       <Link href="/settings/account">
-        <section className="px-5 py-4 bg-surface mb-2 active:bg-surface-soft transition-colors">
+        <section className="px-5 py-4 bg-white mb-2 active:bg-surface-soft transition-colors">
           <div className="flex items-center gap-4">
             <div className="relative w-14 h-14 rounded-full bg-surface-section overflow-hidden flex items-center justify-center">
               <Image src={profileIcon.image} alt="" fill sizes="56px" className="object-cover scale-[1.08] translate-y-[2px]" />
@@ -97,7 +92,7 @@ export default function SettingsPage() {
       </Link>
 
       {settingsGroups.map((group) => (
-        <section key={group.title} className="bg-surface mb-2">
+        <section key={group.title} className="bg-white mb-2">
           <p className="px-5 pt-4 pb-2 text-[12px] font-semibold text-text-muted uppercase tracking-wider">{group.title}</p>
           {group.items.map((item) => {
             const { icon: Icon, label, desc } = item;
@@ -117,7 +112,7 @@ export default function SettingsPage() {
         </section>
       ))}
 
-      <section className="bg-surface mt-2 mb-8">
+      <section className="bg-white mt-2 mb-8">
         <button onClick={() => setShowLogoutConfirm(true)} className="w-full flex items-center gap-4 px-5 py-4 active:bg-surface-soft transition-colors">
           <LogOut size={20} className="text-red-400" strokeWidth={1.5} />
           <span className="text-[15px] text-red-400">로그아웃</span>
@@ -125,25 +120,6 @@ export default function SettingsPage() {
       </section>
 
       <p className="text-center text-[12px] text-text-placeholder pb-8">Loom v1.0.0</p>
-
-      <BottomSheet open={showThemePicker} onClose={() => setShowThemePicker(false)} title="다크모드">
-        <div className="space-y-1">
-          {(["light", "dark", "system"] as ThemeMode[]).map((mode) => (
-            <button
-              key={mode}
-              onClick={() => { setStoredTheme(mode); setThemeMode(mode); setShowThemePicker(false); }}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors ${
-                themeMode === mode ? "bg-surface-soft" : "active:bg-surface-soft"
-              }`}
-            >
-              <span className="text-[15px] text-text-primary">{getThemeLabel(mode)}</span>
-              {themeMode === mode && (
-                <span className="text-[13px] font-semibold text-brand-purple">✓</span>
-              )}
-            </button>
-          ))}
-        </div>
-      </BottomSheet>
 
       <ConfirmDialog
         open={showLogoutConfirm}

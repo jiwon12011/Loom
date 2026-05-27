@@ -124,7 +124,7 @@ export default function SaveLinkPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen bg-white">
       <header className="px-5 pt-14 pb-3 flex items-center justify-between">
         <h1 className="text-[18px] font-bold text-text-primary">저장하기</h1>
         <button onClick={() => router.back()} className="p-2.5 -mr-1 text-text-muted">
@@ -141,7 +141,7 @@ export default function SaveLinkPage() {
               className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-colors ${
                 id === "link"
                   ? "bg-brand-purple text-white border-brand-purple"
-                  : "bg-surface text-text-secondary border-border"
+                  : "bg-white text-text-secondary border-border"
               }`}
             >
               <Icon size={16} strokeWidth={1.5} />

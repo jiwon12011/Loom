@@ -153,7 +153,7 @@ export default function CollectionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen bg-white">
       <header className="px-5 pt-14 pb-3 flex items-center justify-between">
         <h1 className="text-[20px] font-bold text-text-primary">컬렉션</h1>
         <button onClick={() => setShowCreate(true)} className="p-2.5 -mr-1 text-text-muted">
@@ -215,7 +215,7 @@ export default function CollectionsPage() {
               {FOLDERS.map((folder) => (
                 <button key={folder.id} type="button" onClick={() => setSelectedFolder(folder.id)}
                   className={`flex h-16 items-center justify-center rounded-xl border transition-all ${
-                    selectedFolder === folder.id ? "border-brand-purple bg-surface-warm shadow-card" : "border-border-light bg-surface active:bg-surface-soft"
+                    selectedFolder === folder.id ? "border-brand-purple bg-surface-warm shadow-card" : "border-border-light bg-white active:bg-surface-soft"
                   }`}>
                   <span className="relative h-10 w-12">
                     <Image src={folder.image} alt="" fill sizes="48px" className="object-contain" />
@@ -278,7 +278,7 @@ export default function CollectionsPage() {
             {FOLDERS.map((folder) => (
               <button key={folder.id} type="button" onClick={() => setColorFolder(folder.id)}
                 className={`flex h-16 items-center justify-center rounded-xl border transition-all ${
-                  colorFolder === folder.id ? "border-brand-purple bg-surface-warm shadow-card" : "border-border-light bg-surface active:bg-surface-soft"
+                  colorFolder === folder.id ? "border-brand-purple bg-surface-warm shadow-card" : "border-border-light bg-white active:bg-surface-soft"
                 }`}>
                 <span className="relative h-10 w-12">
                   <Image src={folder.image} alt="" fill sizes="48px" className="object-contain" />

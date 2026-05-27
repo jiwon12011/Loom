@@ -44,7 +44,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       <div className="flex-1 flex flex-col justify-center px-6">
         <div className="flex items-center gap-2.5 mb-12">
           <Image src="/logo.png" alt="Loom" width={36} height={36} className="object-contain" />

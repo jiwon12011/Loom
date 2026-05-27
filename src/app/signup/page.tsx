@@ -39,7 +39,7 @@ export default function SignupPage() {
 
   if (done) {
     return (
-      <div className="min-h-screen bg-surface flex flex-col items-center justify-center px-6 text-center">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 text-center">
         <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-6">
           <Check size={32} className="text-green-500" strokeWidth={2.5} />
         </div>
@@ -56,7 +56,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       <header className="px-4 pt-14 pb-2">
         <button onClick={() => router.back()} className="p-1.5 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />

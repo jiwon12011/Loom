@@ -99,14 +99,14 @@ export default function SubscriptionPage() {
 
   return (
     <div className="min-h-screen bg-surface-soft">
-      <header className="px-5 pt-14 pb-3 flex items-center gap-3 bg-surface">
+      <header className="px-5 pt-14 pb-3 flex items-center gap-3 bg-white">
         <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
         <h1 className="text-[18px] font-bold text-text-primary">구독 관리</h1>
       </header>
 
-      <section className="bg-surface mt-2 px-5 py-5">
+      <section className="bg-white mt-2 px-5 py-5">
         <p className="text-[13px] text-text-muted mb-3">현재 사용량</p>
 
         <div className="mb-4">
@@ -146,7 +146,7 @@ export default function SubscriptionPage() {
           return (
             <div
               key={plan.id}
-              className={`bg-surface rounded-2xl border-2 p-5 relative ${
+              className={`bg-white rounded-2xl border-2 p-5 relative ${
                 isCurrent ? "border-brand-purple" : "border-border"
               }`}
             >

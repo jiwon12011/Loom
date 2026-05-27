@@ -26,7 +26,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-56 bg-surface border-r border-border-light z-50 px-4 py-6">
+    <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-56 bg-white border-r border-border-light z-50 px-4 py-6">
       <Link href="/" className="flex items-center gap-2.5 px-2 mb-8">
         <Image src="/logo.png" alt="Loom" width={28} height={28} className="object-contain" />
         <span className="text-[18px] font-semibold text-text-primary tracking-tight">Loom</span>

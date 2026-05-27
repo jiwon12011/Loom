@@ -26,7 +26,7 @@ export default function OnboardingPage() {
   const [current, setCurrent] = useState(0);
 
   return (
-    <div className="min-h-screen bg-surface flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Skip */}
       <header className="px-5 pt-14 flex justify-end">
         <Link href="/login" className="text-[14px] text-text-muted py-2 px-3">

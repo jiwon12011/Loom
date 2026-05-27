@@ -132,7 +132,7 @@ export default function SearchPage() {
               onClick={() => setActiveFilter(f.id)}
               className={`px-3 py-2.5 text-[13px] font-semibold border-b-2 transition-colors ${
                 activeFilter === f.id
-                  ? "text-text-primary border-text-primary"
+                  ? "text-text-primary border-brand-purple"
                   : "text-text-muted border-transparent"
               }`}
             >
@@ -244,3 +244,4 @@ export default function SearchPage() {
     </div>
   );
 }
+

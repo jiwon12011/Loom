@@ -71,7 +71,7 @@ export default function SavePage() {
               onClick={() => { if (id !== "text") router.push(href); }}
               className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-colors ${
                 id === "text"
-                  ? "bg-text-primary text-white border-text-primary"
+                  ? "bg-brand-purple text-white border-brand-purple"
                   : "bg-white text-text-secondary border-border"
               }`}
             >
@@ -108,7 +108,7 @@ export default function SavePage() {
           disabled={!content.trim() || loading}
           className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl text-[15px] font-semibold transition-all ${
             content.trim() && !loading
-              ? "bg-text-primary text-white active:scale-[0.98]"
+              ? "bg-brand-purple text-white active:scale-[0.98]"
               : "bg-surface-section text-text-muted"
           }`}
         >
@@ -119,3 +119,4 @@ export default function SavePage() {
     </div>
   );
 }
+

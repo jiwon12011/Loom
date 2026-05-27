@@ -42,7 +42,7 @@ export default function TabBar() {
           if (tab.id === "add") {
             return (
               <Link key={tab.id} href={tab.href} className="flex items-center justify-center">
-                <div className="w-11 h-11 rounded-full bg-text-primary flex items-center justify-center -mt-3 shadow-elevated">
+                <div className="w-11 h-11 rounded-full bg-brand-purple flex items-center justify-center -mt-3 shadow-elevated">
                   <Plus size={22} className="text-white" strokeWidth={2.5} />
                 </div>
               </Link>
@@ -74,3 +74,4 @@ export default function TabBar() {
     </nav>
   );
 }
+

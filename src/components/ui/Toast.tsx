@@ -32,7 +32,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className="flex items-center gap-2.5 bg-text-primary text-white rounded-xl px-4 py-3 shadow-elevated animate-slide-in"
+            className="flex items-center gap-2.5 bg-brand-purple text-white rounded-xl px-4 py-3 shadow-elevated animate-slide-in"
           >
             {toast.type === "copy" && <Copy size={16} />}
             {toast.type === "success" && <Check size={16} />}
@@ -44,3 +44,4 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     </ToastContext.Provider>
   );
 }
+

@@ -104,7 +104,7 @@ export default function EditPage({ params }: { params: { id: string } }) {
               onClick={() => setCategory(category === cat ? "" : cat)}
               className={`px-3.5 py-2 rounded-lg text-[13px] font-medium border transition-colors ${
                 category === cat
-                  ? "bg-text-primary text-white border-text-primary"
+                  ? "bg-brand-purple text-white border-brand-purple"
                   : "bg-white text-text-secondary border-border"
               }`}
             >
@@ -147,3 +147,4 @@ export default function EditPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
+

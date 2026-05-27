@@ -168,7 +168,7 @@ export default function CollectionsPage() {
                   aria-label={`${folder.label} 폴더 선택`}
                   className={`flex h-16 items-center justify-center rounded-xl border transition-all ${
                     selectedFolder === folder.id
-                      ? "border-text-primary bg-surface-warm shadow-card"
+                      ? "border-brand-purple bg-surface-warm shadow-card"
                       : "border-border-light bg-white active:bg-surface-soft"
                   }`}
                 >
@@ -181,7 +181,7 @@ export default function CollectionsPage() {
           </div>
           <button onClick={handleCreate} disabled={!newName.trim() || creating}
             className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl text-[15px] font-semibold transition-all ${
-              newName.trim() && !creating ? "bg-text-primary text-white" : "bg-surface-section text-text-muted"
+              newName.trim() && !creating ? "bg-brand-purple text-white" : "bg-surface-section text-text-muted"
             }`}>
             {creating && <Loader2 size={16} className="animate-spin" />}
             만들기
@@ -191,3 +191,4 @@ export default function CollectionsPage() {
     </div>
   );
 }
+

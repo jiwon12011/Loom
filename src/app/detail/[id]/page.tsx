@@ -161,7 +161,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
       </section>
 
       <section className="px-5 mb-5">
-        <button onClick={handleCopy} className="w-full flex items-center justify-center gap-2 bg-text-primary text-white rounded-xl py-4 text-[15px] font-semibold active:scale-[0.98] transition-transform">
+        <button onClick={handleCopy} className="w-full flex items-center justify-center gap-2 bg-brand-purple text-white rounded-xl py-4 text-[15px] font-semibold active:scale-[0.98] transition-transform">
           <Copy size={18} strokeWidth={2} />
           복사하기
         </button>
@@ -224,3 +224,4 @@ export default function DetailPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
+

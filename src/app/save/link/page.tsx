@@ -61,7 +61,7 @@ export default function SaveLinkPage() {
               placeholder="https://..." className="flex-1 bg-transparent text-[15px] text-text-primary outline-none placeholder:text-text-placeholder" />
           </div>
           <button onClick={handleFetch} disabled={loading}
-            className="px-4 bg-text-primary text-white rounded-xl text-[14px] font-semibold flex-shrink-0 active:scale-[0.97] transition-transform disabled:opacity-50">
+            className="px-4 bg-brand-purple text-white rounded-xl text-[14px] font-semibold flex-shrink-0 active:scale-[0.97] transition-transform disabled:opacity-50">
             {loading ? <Loader2 size={16} className="animate-spin" /> : "불러오기"}
           </button>
         </div>
@@ -98,7 +98,7 @@ export default function SaveLinkPage() {
       <section className="px-5 pb-8">
         <button onClick={handleSave} disabled={!preview || saving}
           className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl text-[15px] font-semibold transition-all ${
-            preview && !saving ? "bg-text-primary text-white active:scale-[0.98]" : "bg-surface-section text-text-muted"
+            preview && !saving ? "bg-brand-purple text-white active:scale-[0.98]" : "bg-surface-section text-text-muted"
           }`}>
           {saving && <Loader2 size={18} className="animate-spin" />}
           {saving ? "저장 중..." : "저장하기"}
@@ -107,3 +107,4 @@ export default function SaveLinkPage() {
     </div>
   );
 }
+

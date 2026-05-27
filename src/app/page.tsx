@@ -195,7 +195,7 @@ export default function HomePage() {
         <div className="text-center py-20 px-8">
           <p className="text-[18px] font-bold text-text-primary mb-2">아직 저장된 항목이 없어요</p>
           <p className="text-[14px] text-text-muted mb-8">아래 + 버튼을 눌러 첫 번째 기억을 저장해보세요</p>
-          <Link href="/save" className="inline-flex items-center gap-2 bg-text-primary text-white px-6 py-3 rounded-xl text-[14px] font-semibold">
+          <Link href="/save" className="inline-flex items-center gap-2 bg-brand-purple text-white px-6 py-3 rounded-xl text-[14px] font-semibold">
             저장하러 가기
           </Link>
         </div>
@@ -230,3 +230,4 @@ export default function HomePage() {
     </div>
   );
 }
+

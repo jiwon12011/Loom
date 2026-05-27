@@ -80,7 +80,7 @@ export default function LoginPage() {
           disabled={!canSubmit || loading}
           className={`w-full flex items-center justify-center gap-2 rounded-xl py-4 text-[15px] font-semibold transition-all mb-4 ${
             canSubmit && !loading
-              ? "bg-text-primary text-white active:scale-[0.98]"
+              ? "bg-brand-purple text-white active:scale-[0.98]"
               : "bg-surface-section text-text-muted"
           }`}
         >
@@ -98,3 +98,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

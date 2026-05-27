@@ -147,7 +147,7 @@ export default function SaveImagePage() {
           onClick={handleSave}
           disabled={!file || saving}
           className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl text-[15px] font-semibold transition-all ${
-            file && !saving ? "bg-text-primary text-white active:scale-[0.98]" : "bg-surface-section text-text-muted"
+            file && !saving ? "bg-brand-purple text-white active:scale-[0.98]" : "bg-surface-section text-text-muted"
           }`}
         >
           {saving && <Loader2 size={18} className="animate-spin" />}
@@ -157,3 +157,4 @@ export default function SaveImagePage() {
     </div>
   );
 }
+

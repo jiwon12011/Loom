@@ -48,7 +48,7 @@ export default function SignupPage() {
           <span className="font-semibold text-text-primary">{email}</span>로<br />
           인증 메일을 보냈어요. 확인 후 로그인해주세요.
         </p>
-        <Link href="/login" className="w-full flex items-center justify-center bg-text-primary text-white rounded-xl py-4 text-[15px] font-semibold">
+        <Link href="/login" className="w-full flex items-center justify-center bg-brand-purple text-white rounded-xl py-4 text-[15px] font-semibold">
           로그인하러 가기
         </Link>
       </div>
@@ -112,7 +112,7 @@ export default function SignupPage() {
         </div>
 
         <button onClick={() => setAgreed(!agreed)} className="flex items-center gap-3 mb-8">
-          <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${agreed ? "bg-text-primary border-text-primary" : "border-border"}`}>
+          <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${agreed ? "bg-brand-purple border-brand-purple" : "border-border"}`}>
             {agreed && <Check size={13} className="text-white" strokeWidth={3} />}
           </div>
           <span className="text-[13px] text-text-secondary">이용약관 및 개인정보처리방침에 동의합니다</span>
@@ -122,7 +122,7 @@ export default function SignupPage() {
           onClick={handleSignup}
           disabled={!canSubmit}
           className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl text-[15px] font-semibold transition-all ${
-            canSubmit ? "bg-text-primary text-white active:scale-[0.98]" : "bg-surface-section text-text-muted"
+            canSubmit ? "bg-brand-purple text-white active:scale-[0.98]" : "bg-surface-section text-text-muted"
           }`}
         >
           {loading && <Loader2 size={18} className="animate-spin" />}
@@ -139,3 +139,4 @@ export default function SignupPage() {
     </div>
   );
 }
+

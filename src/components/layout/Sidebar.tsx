@@ -54,7 +54,7 @@ export default function Sidebar() {
 
       <Link
         href="/save"
-        className="flex items-center justify-center gap-2 bg-text-primary text-white rounded-xl py-3 text-[14px] font-semibold hover:opacity-90 transition-opacity"
+        className="flex items-center justify-center gap-2 bg-brand-purple text-white rounded-xl py-3 text-[14px] font-semibold hover:opacity-90 transition-opacity"
       >
         <Plus size={16} strokeWidth={2.5} />
         새로 저장
@@ -62,3 +62,4 @@ export default function Sidebar() {
     </aside>
   );
 }
+

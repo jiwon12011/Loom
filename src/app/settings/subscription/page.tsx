@@ -67,7 +67,7 @@ export default function SubscriptionPage() {
           <div
             key={plan.id}
             className={`bg-white rounded-2xl border-2 p-5 relative ${
-              plan.current ? "border-text-primary" : "border-border"
+              plan.current ? "border-brand-purple" : "border-border"
             }`}
           >
             {plan.popular && (
@@ -76,7 +76,7 @@ export default function SubscriptionPage() {
               </div>
             )}
             {plan.current && (
-              <div className="absolute -top-3 right-5 bg-text-primary text-white text-[11px] font-semibold px-3 py-1 rounded-full">
+              <div className="absolute -top-3 right-5 bg-brand-purple text-white text-[11px] font-semibold px-3 py-1 rounded-full">
                 현재 플랜
               </div>
             )}
@@ -99,7 +99,7 @@ export default function SubscriptionPage() {
               className={`w-full py-3.5 rounded-xl text-[14px] font-semibold transition-all ${
                 plan.current
                   ? "bg-surface-section text-text-muted"
-                  : "bg-text-primary text-white active:scale-[0.98]"
+                  : "bg-brand-purple text-white active:scale-[0.98]"
               }`}
               disabled={plan.current}
             >
@@ -111,3 +111,4 @@ export default function SubscriptionPage() {
     </div>
   );
 }
+

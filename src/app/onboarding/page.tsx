@@ -52,7 +52,7 @@ export default function OnboardingPage() {
             key={i}
             className={`rounded-full transition-all ${
               i === current
-                ? "w-6 h-2 bg-text-primary"
+                ? "w-6 h-2 bg-brand-purple"
                 : "w-2 h-2 bg-border"
             }`}
           />
@@ -64,7 +64,7 @@ export default function OnboardingPage() {
         {current < slides.length - 1 ? (
           <button
             onClick={() => setCurrent(current + 1)}
-            className="w-full flex items-center justify-center gap-2 bg-text-primary text-white rounded-xl py-4 text-[15px] font-semibold active:scale-[0.98] transition-transform"
+            className="w-full flex items-center justify-center gap-2 bg-brand-purple text-white rounded-xl py-4 text-[15px] font-semibold active:scale-[0.98] transition-transform"
           >
             다음
             <ArrowRight size={18} />
@@ -72,7 +72,7 @@ export default function OnboardingPage() {
         ) : (
           <Link
             href="/login"
-            className="w-full flex items-center justify-center gap-2 bg-text-primary text-white rounded-xl py-4 text-[15px] font-semibold active:scale-[0.98] transition-transform"
+            className="w-full flex items-center justify-center gap-2 bg-brand-purple text-white rounded-xl py-4 text-[15px] font-semibold active:scale-[0.98] transition-transform"
           >
             시작하기
           </Link>
@@ -81,3 +81,4 @@ export default function OnboardingPage() {
     </div>
   );
 }
+

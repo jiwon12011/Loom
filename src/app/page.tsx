@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
-import { PROFILE_ICON_STORAGE_KEY, getProfileIcon } from "@/lib/profile-icons";
+import { PROFILE_ICON_STORAGE_KEY, PROFILE_THEME_EVENT, getProfileIcon } from "@/lib/profile-icons";
 import { getUnreadCount } from "@/lib/notifications";
 
 type Item = {
@@ -32,6 +32,18 @@ export default function HomePage() {
 
   useEffect(() => {
     setProfileIconId(localStorage.getItem(PROFILE_ICON_STORAGE_KEY));
+
+    const handleProfileChange = () => {
+      setProfileIconId(localStorage.getItem(PROFILE_ICON_STORAGE_KEY));
+    };
+    window.addEventListener("storage", handleProfileChange);
+    window.addEventListener(PROFILE_ICON_STORAGE_KEY, handleProfileChange);
+    window.addEventListener("PROFILE_THEME_EVENT", handleProfileChange);
+    return () => {
+      window.removeEventListener("storage", handleProfileChange);
+      window.removeEventListener(PROFILE_ICON_STORAGE_KEY, handleProfileChange);
+      window.removeEventListener("PROFILE_THEME_EVENT", handleProfileChange);
+    };
   }, []);
 
   useEffect(() => {

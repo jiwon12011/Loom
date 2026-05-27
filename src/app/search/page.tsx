@@ -167,7 +167,7 @@ function SearchContent() {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div className="min-h-screen bg-surface pb-24">
       <header className="px-5 pt-14 pb-3 flex items-center gap-2">
         <button onClick={() => { router.back(); }} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
@@ -247,14 +247,14 @@ function SearchContent() {
                     key={item.id}
                     onClick={() => toggleSelect(item.id)}
                     className={`w-full text-left border rounded-2xl p-4 transition-colors ${
-                      isSelected ? "border-brand-purple bg-purple-50" : "border-border bg-white"
+                      isSelected ? "border-brand-purple bg-purple-50" : "border-border bg-surface"
                     }`}
                   >
                     <div className="flex gap-3 items-start">
                       <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center ${
                         isSelected ? "border-brand-purple bg-brand-purple" : "border-border"
                       }`}>
-                        {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+                        {isSelected && <div className="w-2 h-2 rounded-full bg-surface" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-[14px] text-text-primary font-medium leading-[1.6] line-clamp-2">
@@ -271,7 +271,7 @@ function SearchContent() {
                   </button>
                 ) : (
                   <Link key={item.id} href={`/detail/${item.id}`} className="block">
-                    <div className="bg-white border border-border rounded-2xl px-4 py-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated active:translate-y-0 active:scale-[0.98]">
+                    <div className="bg-surface border border-border rounded-2xl px-4 py-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated active:translate-y-0 active:scale-[0.98]">
                       <div className="flex gap-3">
                         <div className="flex-1 min-w-0">
                           <p className="text-[15px] text-text-primary font-medium leading-[1.6] line-clamp-3">
@@ -299,7 +299,7 @@ function SearchContent() {
       )}
 
       {selectMode && selected.size > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 md:left-56 bg-white border-t border-border px-5 py-4 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 md:left-56 bg-surface border-t border-border px-5 py-4 flex items-center justify-between">
           <span className="text-[14px] font-semibold text-text-primary">{selected.size}개 선택됨</span>
           <button
             onClick={() => setShowDeleteConfirm(true)}

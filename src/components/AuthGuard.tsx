@@ -40,7 +40,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, [pathname]);
 
-  if (!ready) return <div className="min-h-screen bg-white" />;
+  if (!ready) return <div className="min-h-screen bg-surface" />;
 
   return <>{children}</>;
 }

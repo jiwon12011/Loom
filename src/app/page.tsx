@@ -159,7 +159,7 @@ export default function HomePage() {
 
   const ItemCard = ({ item, variant = "default" }: { item: Item; variant?: "default" | "soft" }) => (
     <Link href={`/detail/${item.id}`} className="block">
-      <div className={`${variant === "soft" ? "bg-surface-soft border-border-light hover:border-brand-purple/30" : "bg-white border-border hover:border-brand-purple/35"} border rounded-2xl px-4 py-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated active:translate-y-0 active:scale-[0.98]`}>
+      <div className={`${variant === "soft" ? "bg-surface-soft border-border-light hover:border-brand-purple/30" : "bg-surface border-border hover:border-brand-purple/35"} border rounded-2xl px-4 py-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated active:translate-y-0 active:scale-[0.98]`}>
         <div className="flex gap-3.5">
           {item.content_type === "image" && canPreviewImage(item.original_content) ? (
             <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-surface-section border border-border-light">
@@ -179,7 +179,7 @@ export default function HomePage() {
             </p>
             <div className="flex items-center gap-2.5 mt-3">
               {item.category && (
-                <span className="text-[11px] font-semibold text-brand-purple bg-white px-2 py-0.5 rounded">{item.category}</span>
+                <span className="text-[11px] font-semibold text-brand-purple bg-surface px-2 py-0.5 rounded">{item.category}</span>
               )}
               <span className="text-[12px] text-text-secondary/70">{formatDate(item.created_at)}</span>
               <span className="text-[12px] text-text-secondary/45 px-0.5">·</span>
@@ -195,7 +195,7 @@ export default function HomePage() {
   );
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-white">
+    <div className="relative min-h-screen overflow-hidden bg-surface">
       <div
         className="pointer-events-none absolute -left-20 -top-24 h-[520px] w-[360px] bg-[var(--profile-accent)] opacity-[0.16] transition-colors"
         style={{ clipPath: "ellipse(74% 58% at 0% 0%)" }}
@@ -232,7 +232,7 @@ export default function HomePage() {
       </section>
 
       <section className="relative z-10 px-5 mb-7">
-        <div className="flex min-h-[64px] items-center gap-3.5 bg-white border border-border-light rounded-2xl px-5 py-4 shadow-elevated transition-all focus-within:border-brand-purple/45 focus-within:shadow-[0_8px_24px_rgba(45,42,51,0.08)]">
+        <div className="flex min-h-[64px] items-center gap-3.5 bg-surface border border-border-light rounded-2xl px-5 py-4 shadow-elevated transition-all focus-within:border-brand-purple/45 focus-within:shadow-[0_8px_24px_rgba(45,42,51,0.08)]">
           <Search size={21} className="text-text-secondary flex-shrink-0" strokeWidth={1.8} />
           <input
             type="text"

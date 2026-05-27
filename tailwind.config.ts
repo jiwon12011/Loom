@@ -2,31 +2,32 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
         brand: {
-          purple: "#8B7EA8",
-          "purple-dark": "#6E5F8A",
-          "purple-light": "#A99ABF",
-          peach: "#D4BFA8",
-          "peach-light": "#E8D8C8",
+          purple: "var(--brand-purple)",
+          "purple-dark": "var(--brand-purple-dark)",
+          "purple-light": "var(--brand-purple-light)",
+          peach: "var(--brand-peach)",
+          "peach-light": "var(--brand-peach-light)",
         },
         surface: {
-          DEFAULT: "#FFFFFF",
-          soft: "#F8F7FA",
-          section: "#F3F1F6",
-          warm: "#FAF8F5",
+          DEFAULT: "var(--surface)",
+          soft: "var(--surface-soft)",
+          section: "var(--surface-section)",
+          warm: "var(--surface-warm)",
         },
         text: {
-          primary: "#1A1721",
-          secondary: "#4A4358",
-          muted: "#7D7589",
-          placeholder: "#B0A9BA",
+          primary: "var(--text-primary)",
+          secondary: "var(--text-secondary)",
+          muted: "var(--text-muted)",
+          placeholder: "var(--text-placeholder)",
         },
         border: {
-          DEFAULT: "#E8E4EE",
-          light: "#F0EDF4",
+          DEFAULT: "var(--border)",
+          light: "var(--border-light)",
         },
       },
       fontFamily: {
@@ -43,9 +44,9 @@ const config: Config = {
         "3xl": "20px",
       },
       boxShadow: {
-        card: "0 1px 4px rgba(45, 42, 51, 0.04)",
-        elevated: "0 4px 16px rgba(45, 42, 51, 0.06)",
-        modal: "0 -4px 24px rgba(45, 42, 51, 0.08)",
+        card: "0 1px 4px var(--shadow-color, rgba(45, 42, 51, 0.04))",
+        elevated: "0 4px 16px var(--shadow-color, rgba(45, 42, 51, 0.06))",
+        modal: "0 -4px 24px var(--shadow-color, rgba(45, 42, 51, 0.08))",
       },
     },
   },

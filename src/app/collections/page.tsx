@@ -128,16 +128,27 @@ export default function CollectionsPage() {
 
   const startDelete = () => {
     if (!menuTarget) return;
-    setDeleteTarget(menuTarget);
+    const target = menuTarget;
     setMenuTarget(null);
+    setTimeout(() => setDeleteTarget(target), 200);
   };
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
-    await supabase.from("collection_items").delete().eq("collection_id", deleteTarget.id);
-    await supabase.from("collections").delete().eq("id", deleteTarget.id);
-    setCollections(prev => prev.filter(c => c.id !== deleteTarget.id));
+    const colId = deleteTarget.id;
     setDeleteTarget(null);
+
+    const { error: itemsErr } = await supabase.from("collection_items").delete().eq("collection_id", colId);
+    if (itemsErr) {
+      show("삭제 실패. 다시 시도해주세요.", "error");
+      return;
+    }
+    const { error: colErr } = await supabase.from("collections").delete().eq("id", colId);
+    if (colErr) {
+      show("삭제 실패. 다시 시도해주세요.", "error");
+      return;
+    }
+    setCollections(prev => prev.filter(c => c.id !== colId));
     show("컬렉션이 삭제되었어요", "success");
   };
 

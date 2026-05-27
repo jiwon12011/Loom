@@ -1,20 +1,38 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import type { StaticImageData } from "next/image";
 import BottomSheet from "@/components/ui/BottomSheet";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
+import folderBlue from "../../../img/folder_blue.png";
+import folderDarkgrey from "../../../img/folder_darkgrey.png";
+import folderGreen from "../../../img/folder_green.png";
+import folderGrey from "../../../img/folder_grey.png";
+import folderPink from "../../../img/folder_pink.png";
+import folderPurple from "../../../img/folder_purple.png";
+import folderPurplepink from "../../../img/folder_purplepink.png";
+import folderYellow from "../../../img/folder_yellow.png";
 
-const COLORS = ["#D4BFA8", "#A99ABF", "#8BC6A8", "#8B7EA8", "#C4A87E", "#E8A8A8"];
+const FOLDERS: { id: string; label: string; image: StaticImageData }[] = [
+  { id: "yellow", label: "옐로우", image: folderYellow },
+  { id: "blue", label: "블루", image: folderBlue },
+  { id: "green", label: "그린", image: folderGreen },
+  { id: "purple", label: "퍼플", image: folderPurple },
+  { id: "pink", label: "핑크", image: folderPink },
+  { id: "purplepink", label: "라벤더", image: folderPurplepink },
+  { id: "grey", label: "그레이", image: folderGrey },
+  { id: "darkgrey", label: "다크 그레이", image: folderDarkgrey },
+];
 
 type Collection = {
   id: string;
   name: string;
   description: string | null;
   item_count: number;
-  color?: string;
 };
 
 export default function CollectionsPage() {
@@ -23,7 +41,7 @@ export default function CollectionsPage() {
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [newName, setNewName] = useState("");
-  const [selectedColor, setSelectedColor] = useState(COLORS[0]);
+  const [selectedFolder, setSelectedFolder] = useState(FOLDERS[0].id);
   const [creating, setCreating] = useState(false);
 
   const fetchCollections = async () => {
@@ -40,6 +58,13 @@ export default function CollectionsPage() {
 
   useEffect(() => { fetchCollections(); }, []);
 
+  const getFolder = (collection: Collection, index: number) => {
+    const folderId = collection.description?.startsWith("folder:")
+      ? collection.description.replace("folder:", "")
+      : null;
+    return FOLDERS.find((folder) => folder.id === folderId) ?? FOLDERS[index % FOLDERS.length];
+  };
+
   const handleCreate = async () => {
     if (!newName.trim()) return;
     setCreating(true);
@@ -48,6 +73,7 @@ export default function CollectionsPage() {
     const { error } = await supabase.from("collections").insert({
       user_id: user.id,
       name: newName.trim(),
+      description: `folder:${selectedFolder}`,
     });
     setCreating(false);
     if (error) {
@@ -56,6 +82,7 @@ export default function CollectionsPage() {
       show(`'${newName}' 컬렉션이 생성되었어요`, "success");
       setShowCreate(false);
       setNewName("");
+      setSelectedFolder(FOLDERS[0].id);
       fetchCollections();
     }
   };
@@ -79,19 +106,36 @@ export default function CollectionsPage() {
           <p className="text-[14px] text-text-muted mb-8">+ 버튼을 눌러 컬렉션을 만들어보세요</p>
         </div>
       ) : (
-        <div className="px-5 pt-2 space-y-1">
+        <div className="px-5 pt-2">
           {collections.map((col, i) => {
-            const color = COLORS[i % COLORS.length];
+            const folder = getFolder(col, i);
             return (
-              <Link key={col.id} href={`/collections/${col.id}`}>
-                <div className="flex items-center gap-4 py-4 border-b border-border-light active:bg-surface-soft transition-colors rounded-lg px-1">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: color + "30" }}>
-                    <div className="w-3.5 h-3.5 rounded-sm" style={{ backgroundColor: color }} />
+              <Link key={col.id} href={`/collections/${col.id}`} className="block">
+                <div className="flex min-h-[82px] items-center gap-4 border-b border-border-light px-0 py-4 transition-colors active:bg-surface-soft">
+                  <div className="relative h-12 w-14 flex-shrink-0">
+                    <Image
+                      src={folder.image}
+                      alt=""
+                      fill
+                      sizes="56px"
+                      className="object-contain"
+                      priority={i < 4}
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[15px] font-semibold text-text-primary">{col.name}</p>
-                    <p className="text-[12px] text-text-muted mt-0.5">{col.item_count}개</p>
+                    <p className="text-[16px] font-bold text-text-primary leading-tight truncate">{col.name}</p>
+                    <p className="text-[13px] font-medium text-text-muted mt-1">{col.item_count}개</p>
                   </div>
+                  <button
+                    aria-label={`${col.name} 더보기`}
+                    className="p-2 text-text-muted transition-colors hover:text-text-primary"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                  >
+                    <MoreHorizontal size={20} strokeWidth={1.8} />
+                  </button>
                 </div>
               </Link>
             );
@@ -114,13 +158,24 @@ export default function CollectionsPage() {
             />
           </div>
           <div>
-            <label className="text-[13px] font-semibold text-text-secondary mb-2 block">컬러</label>
-            <div className="flex gap-3">
-              {COLORS.map((c) => (
-                <button key={c} onClick={() => setSelectedColor(c)}
-                  className={`w-9 h-9 rounded-full transition-all ${selectedColor === c ? "ring-2 ring-offset-2 ring-text-primary scale-110" : ""}`}
-                  style={{ backgroundColor: c }}
-                />
+            <label className="text-[13px] font-semibold text-text-secondary mb-3 block">폴더 색상</label>
+            <div className="grid grid-cols-4 gap-3">
+              {FOLDERS.map((folder) => (
+                <button
+                  key={folder.id}
+                  type="button"
+                  onClick={() => setSelectedFolder(folder.id)}
+                  aria-label={`${folder.label} 폴더 선택`}
+                  className={`flex h-16 items-center justify-center rounded-xl border transition-all ${
+                    selectedFolder === folder.id
+                      ? "border-text-primary bg-surface-warm shadow-card"
+                      : "border-border-light bg-white active:bg-surface-soft"
+                  }`}
+                >
+                  <span className="relative h-10 w-12">
+                    <Image src={folder.image} alt="" fill sizes="48px" className="object-contain" />
+                  </span>
+                </button>
               ))}
             </div>
           </div>

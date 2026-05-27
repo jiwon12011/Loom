@@ -74,7 +74,7 @@ export default function SettingsPage() {
         <section className="px-5 py-4 bg-white mb-2 active:bg-surface-soft transition-colors">
           <div className="flex items-center gap-4">
             <div className="relative w-14 h-14 rounded-full bg-surface-section overflow-hidden flex items-center justify-center">
-              <Image src={profileIcon.image} alt="" fill sizes="56px" className="object-cover" />
+              <Image src={profileIcon.image} alt="" fill sizes="56px" className="object-cover scale-[1.08] translate-y-[2px]" />
             </div>
             <div className="flex-1">
               <p className="text-[16px] font-bold text-text-primary">{email ? email.split("@")[0] : "사용자"}</p>

@@ -69,7 +69,7 @@ export default function AccountPage() {
           className="flex flex-col items-center gap-3 active:scale-[0.98] transition-transform"
         >
           <span className="relative w-20 h-20 rounded-full bg-surface-section overflow-hidden flex items-center justify-center">
-            <Image src={profileIcon.image} alt="" fill sizes="80px" className="object-cover" priority />
+            <Image src={profileIcon.image} alt="" fill sizes="80px" className="object-cover scale-[1.08] translate-y-[3px]" priority />
           </span>
           <span className="text-[13px] font-semibold text-brand-purple">프로필 아이콘 변경</span>
         </button>
@@ -138,7 +138,7 @@ export default function AccountPage() {
               }`}
             >
               <span className="relative h-14 w-14 overflow-hidden rounded-full bg-surface-section">
-                <Image src={icon.image} alt="" fill sizes="56px" className="object-cover" />
+                <Image src={icon.image} alt="" fill sizes="56px" className="object-cover scale-[1.08] translate-y-[2px]" />
               </span>
             </button>
           ))}

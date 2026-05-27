@@ -19,9 +19,9 @@ body {
 }
 
 :root {
-  --profile-accent: #46a7f2;
-  --profile-soft: #e9f4ff;
-  --profile-glow: rgba(70, 167, 242, 0.26);
+  --profile-accent: #d96fa1;
+  --profile-soft: #d96fa1;
+  --profile-glow: rgba(217, 111, 161, 0.3);
 }
 
 @media (min-width: 768px) {

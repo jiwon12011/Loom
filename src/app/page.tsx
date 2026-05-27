@@ -142,8 +142,8 @@ export default function HomePage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-white">
-      <div className="pointer-events-none absolute -left-40 -top-52 h-[430px] w-[430px] rounded-full bg-[var(--profile-soft)] transition-colors" />
-      <div className="pointer-events-none absolute -left-28 top-28 h-[360px] w-[220px] rounded-[100%] bg-[var(--profile-soft)] opacity-45 blur-2xl transition-colors" />
+      <div className="pointer-events-none absolute -left-40 -top-52 h-[430px] w-[430px] rounded-full bg-[var(--profile-accent)] opacity-[0.16] transition-colors" />
+      <div className="pointer-events-none absolute -left-28 top-28 h-[360px] w-[220px] rounded-[100%] bg-[var(--profile-accent)] opacity-[0.08] blur-2xl transition-colors" />
       <header className="relative z-10 px-5 pt-14 pb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Image src="/logo.png" alt="Loom" width={32} height={32} className="object-contain" />

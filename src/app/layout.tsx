@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "@/styles/globals.css";
 import TabBar from "@/components/layout/TabBar";
-import Sidebar from "@/components/layout/Sidebar";
 import AuthGuard from "@/components/AuthGuard";
 import { ToastProvider } from "@/components/ui/Toast";
 
@@ -25,16 +24,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className="bg-white">
+      <body className="bg-white md:bg-[#F4F1F7]">
         <ToastProvider>
           <AuthGuard>
-            <Sidebar />
-            <div className="md:ml-56">
-              <main className="pb-20 md:pb-0 max-w-[430px] md:max-w-2xl mx-auto md:mx-0 md:px-8">
-                {children}
-              </main>
+            <div className="min-h-dvh md:flex md:items-center md:justify-center md:p-6">
+              <div className="phone-frame relative w-full max-w-[430px] md:h-[min(860px,calc(100dvh-48px))] md:rounded-[46px] md:bg-[#171421] md:p-3 md:shadow-[0_28px_80px_rgba(35,28,52,0.24)]">
+                <div className="hidden md:block absolute left-1/2 top-4 z-[60] h-1.5 w-16 -translate-x-1/2 rounded-full bg-white/18" />
+                <div className="phone-screen relative w-full min-h-dvh overflow-hidden bg-white md:h-full md:min-h-0 md:rounded-[36px]">
+                  <main className="h-full max-w-[430px] mx-auto overflow-y-auto pb-20 scrollbar-hide">
+                    {children}
+                  </main>
+                  <TabBar />
+                </div>
+              </div>
             </div>
-            <TabBar />
           </AuthGuard>
         </ToastProvider>
       </body>

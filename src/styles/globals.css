@@ -18,6 +18,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+@media (min-width: 768px) {
+  .phone-screen .min-h-screen {
+    min-height: 100%;
+  }
+}
+
 @layer utilities {
   .safe-bottom {
     padding-bottom: max(env(safe-area-inset-bottom), 16px);

@@ -5,6 +5,7 @@ import { X, FileText, Image, Link2, Sparkles, Loader2, ImagePlus } from "lucide-
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
+import { notifyAiComplete } from "@/lib/notifications";
 
 const saveTypes = [
   { id: "text", icon: FileText, label: "텍스트", href: "/save" },
@@ -90,6 +91,7 @@ export default function SavePage() {
       const { category, tags } = await res.json();
       if (category || tags?.length > 0) {
         await supabase.from("items").update({ category, tags }).eq("id", inserted.id);
+        await notifyAiComplete(user.id, inserted.id, category, tags ?? []);
       }
     } catch { /* AI 실패해도 저장은 유지 */ }
 
@@ -100,9 +102,9 @@ export default function SavePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="px-4 pt-14 pb-3 flex items-center justify-between">
+      <header className="px-5 pt-14 pb-3 flex items-center justify-between">
         <h1 className="text-[18px] font-bold text-text-primary">저장하기</h1>
-        <button onClick={() => router.back()} className="p-1.5 text-text-muted">
+        <button onClick={() => router.back()} className="p-2.5 -mr-1 text-text-muted">
           <X size={22} strokeWidth={1.5} />
         </button>
       </header>

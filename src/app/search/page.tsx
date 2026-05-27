@@ -22,6 +22,7 @@ const FILTERS = [
   { id: "all", label: "전체" },
   { id: "text", label: "텍스트" },
   { id: "image", label: "이미지" },
+  { id: "link", label: "링크" },
 ];
 
 function SearchContent() {
@@ -114,7 +115,8 @@ function SearchContent() {
   const filtered = baseResults.filter(i =>
     activeFilter === "all" ||
     i.content_type === activeFilter ||
-    (activeFilter === "text" && i.content_type === "mixed")
+    (activeFilter === "text" && i.content_type === "mixed") ||
+    (activeFilter === "link" && i.content_type === "link")
   );
 
   const toggleSelect = (id: string) => {
@@ -135,11 +137,23 @@ function SearchContent() {
     show(`${ids.length}개 삭제되었어요`, "success");
   };
 
-  const handleCopy = (e: React.MouseEvent, content: string) => {
+  const handleCopy = async (e: React.MouseEvent, item: typeof allItems[0]) => {
     e.preventDefault();
     e.stopPropagation();
-    navigator.clipboard.writeText(content);
-    show("복사 완료", "copy");
+    const text = item.content_type === "link" ? item.original_content.split("\n")[0] : item.original_content;
+    try {
+      await navigator.clipboard.writeText(text);
+      show("복사 완료", "copy");
+    } catch {
+      show("복사에 실패했어요", "error");
+    }
+  };
+
+  const getTypeLabel = (type: string) => {
+    if (type === "mixed") return "텍스트+이미지";
+    if (type === "image") return "이미지";
+    if (type === "link") return "링크";
+    return "텍스트";
   };
 
   const formatDate = (dateStr: string) => {
@@ -154,8 +168,8 @@ function SearchContent() {
 
   return (
     <div className="min-h-screen bg-white pb-24">
-      <header className="px-4 pt-14 pb-3 flex items-center gap-2">
-        <button onClick={() => { router.back(); }} className="p-1.5 text-text-primary">
+      <header className="px-5 pt-14 pb-3 flex items-center gap-2">
+        <button onClick={() => { router.back(); }} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
         <div className="flex-1 flex items-center gap-2 bg-surface-soft border border-border rounded-xl px-3.5 py-2.5">
@@ -257,21 +271,21 @@ function SearchContent() {
                   </button>
                 ) : (
                   <Link key={item.id} href={`/detail/${item.id}`} className="block">
-                    <div className="bg-white border border-border rounded-2xl px-4 py-5 active:scale-[0.98] transition-transform">
+                    <div className="bg-white border border-border rounded-2xl px-4 py-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated active:translate-y-0 active:scale-[0.98]">
                       <div className="flex gap-3">
                         <div className="flex-1 min-w-0">
-                          <p className="text-[14px] text-text-primary font-medium leading-[1.6] line-clamp-3">
+                          <p className="text-[15px] text-text-primary font-medium leading-[1.6] line-clamp-3">
                           {item.content_type === "image" ? (item.summary ?? "이미지") : item.original_content}
                         </p>
                           <div className="flex items-center gap-2 mt-2.5">
                             {item.category && (
                               <span className="text-[11px] font-semibold text-brand-purple bg-surface-section px-2 py-0.5 rounded">{item.category}</span>
                             )}
-                            <span className="text-[11px] text-text-muted">{item.content_type === "text" ? "텍스트" : "이미지"}</span>
+                            <span className="text-[11px] text-text-muted">{getTypeLabel(item.content_type)}</span>
                             <span className="text-[11px] text-text-muted">{formatDate(item.created_at)}</span>
                           </div>
                         </div>
-                        <button className="p-1 text-text-muted self-start flex-shrink-0" onClick={(e) => handleCopy(e, item.original_content)}>
+                        <button className="p-2.5 text-text-muted self-start flex-shrink-0" onClick={(e) => handleCopy(e, item)}>
                           <Copy size={16} strokeWidth={1.5} />
                         </button>
                       </div>

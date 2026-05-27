@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Bell, Search, Copy, ChevronRight, TrendingUp, X, FileText, Image as ImageIcon, Link2 } from "lucide-react";
+import { Bell, Search, Copy, ChevronRight, TrendingUp, X, FileText, Image as ImageIcon, Link2, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
 import { PROFILE_ICON_STORAGE_KEY, getProfileIcon } from "@/lib/profile-icons";
+import { getUnreadCount } from "@/lib/notifications";
 
 type Item = {
   id: string;
@@ -27,6 +28,7 @@ export default function HomePage() {
   const [searching, setSearching] = useState(false);
   const [aiResultIds, setAiResultIds] = useState<string[]>([]);
   const [searchMode, setSearchMode] = useState<"ai" | "local" | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     setProfileIconId(localStorage.getItem(PROFILE_ICON_STORAGE_KEY));
@@ -46,6 +48,8 @@ export default function HomePage() {
 
       setAllItems(data ?? []);
       setLoading(false);
+
+      getUnreadCount(user.id).then(setUnreadCount);
     };
 
     fetchItems();
@@ -106,11 +110,25 @@ export default function HomePage() {
     ? (aiResultIds.length > 0 ? aiRanked : locallyFiltered)
     : [];
 
-  const handleCopy = (e: React.MouseEvent, content: string) => {
+  const handleCopy = async (e: React.MouseEvent, item: Item) => {
     e.preventDefault();
     e.stopPropagation();
-    navigator.clipboard.writeText(content);
-    show("복사 완료", "copy");
+    const text = item.content_type === "link" ? item.original_content.split("\n")[0] : item.original_content;
+    try {
+      await navigator.clipboard.writeText(text);
+      show("복사 완료", "copy");
+    } catch {
+      show("복사에 실패했어요", "error");
+    }
+  };
+
+  const getDisplayText = (item: Item) => {
+    if (item.content_type === "image") return item.summary ?? "이미지";
+    if (item.content_type === "link") {
+      const lines = item.original_content.split("\n");
+      return lines[1] || lines[0];
+    }
+    return item.original_content;
   };
 
   const formatDate = (dateStr: string) => {
@@ -157,7 +175,7 @@ export default function HomePage() {
           )}
           <div className="flex-1 min-w-0">
             <p className="text-[15px] text-text-primary font-semibold leading-[1.55] line-clamp-2">
-              {item.content_type === "image" ? (item.summary ?? "이미지") : item.original_content}
+              {getDisplayText(item)}
             </p>
             <div className="flex items-center gap-2.5 mt-3">
               {item.category && (
@@ -168,7 +186,7 @@ export default function HomePage() {
               <span className="text-[12px] text-text-secondary/70">{getTypeLabel(item.content_type)}</span>
             </div>
           </div>
-          <button className="p-2 text-text-muted hover:text-text-primary flex-shrink-0 self-start transition-colors" onClick={(e) => handleCopy(e, item.original_content)}>
+          <button className="p-2.5 text-text-muted hover:text-text-primary flex-shrink-0 self-start transition-colors" onClick={(e) => handleCopy(e, item)}>
             <Copy size={16} strokeWidth={1.5} />
           </button>
         </div>
@@ -186,7 +204,7 @@ export default function HomePage() {
         className="pointer-events-none absolute -left-24 top-20 h-[520px] w-[260px] bg-[var(--profile-accent)] opacity-[0.08] blur-2xl transition-colors"
         style={{ clipPath: "ellipse(76% 62% at 0% 18%)" }}
       />
-      <header className="relative z-10 px-5 pt-14 pb-2 flex items-center justify-between">
+      <header className="relative z-10 px-5 pt-14 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Image src="/logo.png" alt="Loom" width={32} height={32} className="object-contain" />
           <span className="text-[20px] font-semibold text-text-primary tracking-tight">Loom</span>
@@ -194,6 +212,11 @@ export default function HomePage() {
         <div className="ml-auto flex items-center gap-3">
           <Link href="/notifications" className="p-2 text-text-muted relative">
             <Bell size={22} strokeWidth={1.5} />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 min-w-[16px] h-4 flex items-center justify-center bg-brand-purple text-white text-[10px] font-bold rounded-full px-1">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
           </Link>
           <Link href="/settings/account">
             <div className="relative w-8 h-8 rounded-full bg-surface-section overflow-hidden flex items-center justify-center">
@@ -238,7 +261,7 @@ export default function HomePage() {
           </div>
           {searching ? (
             <div className="flex justify-center pt-8">
-              <div className="w-6 h-6 border-2 border-brand-purple border-t-transparent rounded-full animate-spin" />
+              <Loader2 size={24} className="animate-spin text-brand-purple" />
             </div>
           ) : searchResults.length > 0 ? (
             <div className="space-y-3">
@@ -253,7 +276,7 @@ export default function HomePage() {
         </section>
       ) : loading ? (
         <div className="relative z-10 flex justify-center pt-20">
-          <div className="w-6 h-6 border-2 border-brand-purple border-t-transparent rounded-full animate-spin" />
+          <Loader2 size={24} className="animate-spin text-brand-purple" />
         </div>
       ) : allItems.length === 0 ? (
         <div className="relative z-10 text-center py-20 px-8">

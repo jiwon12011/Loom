@@ -122,12 +122,12 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="px-4 pt-14 pb-3 flex items-center justify-between">
-        <button onClick={() => router.back()} className="p-1.5 text-text-primary">
+      <header className="px-5 pt-14 pb-3 flex items-center justify-between">
+        <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
-        <h1 className="text-[17px] font-bold text-text-primary">{collection?.name ?? "컬렉션"}</h1>
-        <button onClick={openAddSheet} className="p-1.5 text-text-primary">
+        <h1 className="text-[18px] font-bold text-text-primary">{collection?.name ?? "컬렉션"}</h1>
+        <button onClick={openAddSheet} className="p-2.5 -mr-1 text-text-primary">
           <Plus size={22} strokeWidth={1.5} />
         </button>
       </header>
@@ -144,13 +144,13 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
           action={{ label: "기존 아이템 추가", onClick: openAddSheet }}
         />
       ) : (
-        <div className="px-5 space-y-3 pb-6">
+        <div className="px-5 space-y-3 pb-24">
           {items.map((item) => (
             <div key={item.collection_item_id} className="bg-white border border-border rounded-2xl p-4">
               <div className="flex gap-3">
                 <Link href={`/detail/${item.id}`} className="flex-1 min-w-0">
-                  <p className="text-[14px] text-text-primary font-medium leading-[1.6] line-clamp-3">
-                    {item.content_type === "image" ? (item.summary ?? "이미지") : item.original_content}
+                  <p className="text-[15px] text-text-primary font-medium leading-[1.6] line-clamp-3">
+                    {item.content_type === "image" ? (item.summary ?? "이미지") : item.content_type === "link" ? (item.original_content.split("\n")[1] || item.original_content.split("\n")[0]) : item.original_content}
                   </p>
                   <div className="flex items-center gap-2 mt-2">
                     {item.category && (
@@ -160,10 +160,10 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                   </div>
                 </Link>
                 <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
-                  <button onClick={() => { navigator.clipboard.writeText(item.original_content); show("복사 완료", "copy"); }} className="p-1.5 text-text-muted">
+                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); const t = item.content_type === "link" ? item.original_content.split("\n")[0] : item.original_content; navigator.clipboard.writeText(t).then(() => show("복사 완료", "copy")).catch(() => show("복사에 실패했어요", "error")); }} className="p-2.5 text-text-muted">
                     <Copy size={15} strokeWidth={1.5} />
                   </button>
-                  <button onClick={() => setRemoveTarget(item.collection_item_id)} className="p-1.5 text-text-muted">
+                  <button onClick={() => setRemoveTarget(item.collection_item_id)} className="p-2.5 text-text-muted">
                     <Trash2 size={15} strokeWidth={1.5} />
                   </button>
                 </div>
@@ -176,7 +176,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
       <BottomSheet open={showAddSheet} onClose={() => setShowAddSheet(false)} title="기존 아이템 추가">
         {addLoading ? (
           <div className="flex justify-center py-10">
-            <Loader2 size={22} className="animate-spin text-brand-purple" />
+            <Loader2 size={24} className="animate-spin text-brand-purple" />
           </div>
         ) : availableItems.length === 0 ? (
           <div className="text-center py-8">

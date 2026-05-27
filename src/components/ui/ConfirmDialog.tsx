@@ -24,7 +24,7 @@ export default function ConfirmDialog({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center">
+    <div className="fixed inset-0 z-[90] flex items-center justify-center">
       <div className="absolute inset-0 bg-black/30" onClick={onCancel} />
       <div className="relative bg-white rounded-2xl w-[300px] mx-auto overflow-hidden shadow-elevated animate-slide-in">
         <div className="px-6 pt-6 pb-4 text-center">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowLeft, Copy, Pencil, Bookmark, Share2, Trash2, Loader2 } from "lucide-react";
+import { ArrowLeft, Copy, Pencil, Bookmark, Share2, Trash2, Loader2, ExternalLink } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/ui/Toast";
@@ -68,8 +68,13 @@ export default function DetailPage({ params }: { params: { id: string } }) {
 
   const handleCopy = async () => {
     if (!item) return;
-    navigator.clipboard.writeText(item.original_content);
-    show("복사 완료", "copy");
+    try {
+      await navigator.clipboard.writeText(copyText);
+      show("복사 완료", "copy");
+    } catch {
+      show("복사에 실패했어요", "error");
+      return;
+    }
     await supabase.from("items").update({
       copy_count: item.copy_count + 1,
       last_used_at: new Date().toISOString(),
@@ -80,11 +85,15 @@ export default function DetailPage({ params }: { params: { id: string } }) {
   const handleShare = async () => {
     if (!item) return;
     if (navigator.share) {
-      try { await navigator.share({ text: item.original_content }); }
+      try { await navigator.share({ text: copyText }); }
       catch { /* user cancelled */ }
     } else {
-      navigator.clipboard.writeText(item.original_content);
-      show("복사되었어요", "copy");
+      try {
+        await navigator.clipboard.writeText(copyText);
+        show("복사되었어요", "copy");
+      } catch {
+        show("공유에 실패했어요", "error");
+      }
     }
   };
 
@@ -138,20 +147,62 @@ export default function DetailPage({ params }: { params: { id: string } }) {
 
   if (!item) return null;
 
+  const isLink = item.content_type === "link";
+  const linkUrl = isLink ? item.original_content.split("\n")[0] : null;
+  const linkTitle = isLink ? item.original_content.split("\n")[1] || null : null;
+  const linkDesc = isLink
+    ? item.original_content.split("\n").slice(2).filter(l => !l.startsWith("[메모]")).join("\n") || null
+    : null;
+  const linkMemo = isLink
+    ? item.original_content.split("\n").find(l => l.startsWith("[메모]"))?.replace("[메모] ", "") || null
+    : null;
+  const copyText = isLink && linkUrl ? linkUrl : item.original_content;
+
+  const getTypeLabel = (type: string) => {
+    if (type === "mixed") return "텍스트+이미지";
+    if (type === "image") return "이미지";
+    if (type === "link") return "링크";
+    return "텍스트";
+  };
+
   return (
-    <div className="min-h-screen bg-white pb-8">
-      <header className="px-4 pt-14 pb-3 flex items-center justify-between">
-        <button onClick={() => router.back()} className="p-1.5 text-text-primary">
+    <div className="min-h-screen bg-white pb-24">
+      <header className="px-5 pt-14 pb-3 flex items-center justify-between">
+        <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
         <span className="text-[12px] font-semibold text-brand-purple bg-surface-section px-3 py-1 rounded-md">
-          {item.content_type === "mixed" ? "텍스트+이미지" : item.content_type === "text" ? "텍스트" : "이미지"}
+          {getTypeLabel(item.content_type)}
         </span>
       </header>
 
       <section className="px-5 mb-6">
         {item.content_type === "image" ? (
           <img src={item.original_content} alt="저장된 이미지" className="w-full rounded-2xl object-contain max-h-96" />
+        ) : isLink && linkUrl ? (
+          <div>
+            <h1 className="text-[22px] font-bold text-text-primary leading-[1.5]">
+              {linkTitle || linkUrl}
+            </h1>
+            {linkDesc && (
+              <p className="text-[15px] text-text-secondary mt-2 leading-relaxed">{linkDesc}</p>
+            )}
+            <a
+              href={linkUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-1.5 text-[14px] text-brand-purple font-semibold"
+            >
+              <ExternalLink size={15} strokeWidth={1.5} />
+              링크 열기
+            </a>
+            {linkMemo && (
+              <div className="mt-4 bg-surface-soft rounded-xl px-4 py-3">
+                <p className="text-[12px] text-text-muted mb-1">메모</p>
+                <p className="text-[14px] text-text-primary leading-relaxed">{linkMemo}</p>
+              </div>
+            )}
+          </div>
         ) : (
           <h1 className="text-[22px] font-bold text-text-primary leading-[1.5] whitespace-pre-line">
             {item.original_content}

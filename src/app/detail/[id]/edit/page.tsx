@@ -5,8 +5,7 @@ import { ArrowLeft, X, Plus, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/ui/Toast";
-
-const CATEGORIES = ["카피/문구", "디자인", "아이디어", "코드", "레퍼런스", "일상", "기타"];
+import { getAllCategoryNames } from "@/lib/categories";
 
 export default function EditPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -19,22 +18,26 @@ export default function EditPage({ params }: { params: { id: string } }) {
   const [newTag, setNewTag] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [categoryList, setCategoryList] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetch = async () => {
-      const { data } = await supabase
-        .from("items")
-        .select("original_content, category, tags")
-        .eq("id", id)
-        .single();
-      if (data) {
-        setContent(data.original_content);
-        setCategory(data.category ?? "");
-        setTags(data.tags ?? []);
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      const [itemRes, cats] = await Promise.all([
+        supabase.from("items").select("original_content, category, tags").eq("id", id).single(),
+        user ? getAllCategoryNames(user.id) : Promise.resolve([]),
+      ]);
+
+      if (itemRes.data) {
+        setContent(itemRes.data.original_content);
+        setCategory(itemRes.data.category ?? "");
+        setTags(itemRes.data.tags ?? []);
       }
+      setCategoryList(cats);
       setLoading(false);
     };
-    fetch();
+    load();
   }, [id]);
 
   const addTag = () => {
@@ -72,11 +75,11 @@ export default function EditPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="px-4 pt-14 pb-3 flex items-center justify-between">
-        <button onClick={() => router.back()} className="p-1.5 text-text-primary">
+      <header className="px-5 pt-14 pb-3 flex items-center justify-between">
+        <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
-        <h1 className="text-[17px] font-bold text-text-primary">수정</h1>
+        <h1 className="text-[18px] font-bold text-text-primary">수정</h1>
         <button
           onClick={handleSave}
           disabled={saving || !content.trim()}
@@ -98,7 +101,7 @@ export default function EditPage({ params }: { params: { id: string } }) {
       <section className="px-5 mb-6">
         <label className="text-[13px] font-semibold text-text-secondary mb-2 block">카테고리</label>
         <div className="flex flex-wrap gap-2">
-          {CATEGORIES.map((cat) => (
+          {categoryList.map((cat) => (
             <button
               key={cat}
               onClick={() => setCategory(category === cat ? "" : cat)}

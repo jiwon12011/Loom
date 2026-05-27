@@ -14,7 +14,7 @@ export default function BottomSheet({ open, onClose, title, children }: BottomSh
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[90]">
+    <div className="fixed inset-0 z-[80]">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white rounded-t-3xl shadow-modal animate-slide-up safe-bottom">
         <div className="flex items-center justify-center pt-3 pb-1">

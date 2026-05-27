@@ -57,8 +57,8 @@ export default function AccountPage() {
 
   return (
     <div className="min-h-screen bg-surface-soft">
-      <header className="px-4 pt-14 pb-3 flex items-center gap-3 bg-white">
-        <button onClick={() => router.back()} className="p-1.5 text-text-primary">
+      <header className="px-5 pt-14 pb-3 flex items-center gap-3 bg-white">
+        <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
         <h1 className="text-[18px] font-bold text-text-primary">계정 정보</h1>
@@ -152,7 +152,25 @@ export default function AccountPage() {
         message="모든 저장된 아이템, 컬렉션, 태그가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다."
         confirmLabel="삭제"
         danger
-        onConfirm={() => { setShowDeleteConfirm(false); router.push("/login"); }}
+        onConfirm={async () => {
+          setShowDeleteConfirm(false);
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          const uid = user.id;
+          await supabase.from("notifications").delete().eq("user_id", uid);
+          await supabase.from("collection_items").delete().in(
+            "collection_id",
+            (await supabase.from("collections").select("id").eq("user_id", uid)).data?.map(c => c.id) ?? []
+          );
+          await supabase.from("collections").delete().eq("user_id", uid);
+          await supabase.from("item_images").delete().eq("user_id", uid);
+          await supabase.from("user_categories").delete().eq("user_id", uid);
+          await supabase.from("items").delete().eq("user_id", uid);
+          await supabase.auth.signOut();
+          localStorage.removeItem(PROFILE_ICON_STORAGE_KEY);
+          show("계정이 삭제되었어요.", "success");
+          router.replace("/onboarding");
+        }}
         onCancel={() => setShowDeleteConfirm(false)}
       />
     </div>

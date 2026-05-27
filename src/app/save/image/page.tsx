@@ -1,10 +1,17 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { X, ImagePlus, Loader2 } from "lucide-react";
+import { X, ImagePlus, Loader2, FileText, Image as ImageIcon, Link2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
+import { notifyAiComplete } from "@/lib/notifications";
+
+const saveTypes = [
+  { id: "text", icon: FileText, label: "텍스트", href: "/save" },
+  { id: "image", icon: ImageIcon, label: "이미지", href: "/save/image" },
+  { id: "link", icon: Link2, label: "링크", href: "/save/link" },
+];
 
 export default function SaveImagePage() {
   const router = useRouter();
@@ -72,6 +79,7 @@ export default function SaveImagePage() {
       if (parts.length > 0) updateData.summary = parts.join("\n\n");
       if (Object.keys(updateData).length > 0) {
         await supabase.from("items").update(updateData).eq("id", inserted.id);
+        await notifyAiComplete(user.id, inserted.id, updateData.category ?? null, updateData.tags ?? []);
       }
     } catch { /* AI 실패해도 저장은 유지 */ }
 
@@ -82,12 +90,31 @@ export default function SaveImagePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="px-4 pt-14 pb-3 flex items-center justify-between">
-        <h1 className="text-[18px] font-bold text-text-primary">이미지 저장</h1>
-        <button onClick={() => router.back()} className="p-1.5 text-text-muted">
+      <header className="px-5 pt-14 pb-3 flex items-center justify-between">
+        <h1 className="text-[18px] font-bold text-text-primary">저장하기</h1>
+        <button onClick={() => router.back()} className="p-2.5 -mr-1 text-text-muted">
           <X size={22} strokeWidth={1.5} />
         </button>
       </header>
+
+      <div className="px-5 mb-6">
+        <div className="flex gap-2">
+          {saveTypes.map(({ id, icon: Icon, label, href }) => (
+            <button
+              key={id}
+              onClick={() => { if (id !== "image") router.push(href); }}
+              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-colors ${
+                id === "image"
+                  ? "bg-brand-purple text-white border-brand-purple"
+                  : "bg-white text-text-secondary border-border"
+              }`}
+            >
+              <Icon size={16} strokeWidth={1.5} />
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <section className="px-5 mb-5">
         <input

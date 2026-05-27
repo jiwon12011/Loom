@@ -8,9 +8,11 @@ import { useRouter } from "next/navigation";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { supabase } from "@/lib/supabase";
 import { PROFILE_ICON_STORAGE_KEY, getProfileIcon } from "@/lib/profile-icons";
+import { useToast } from "@/components/ui/Toast";
 
 export default function SettingsPage() {
   const router = useRouter();
+  const { show } = useToast();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [email, setEmail] = useState("");
   const [itemCount, setItemCount] = useState(0);
@@ -38,19 +40,23 @@ export default function SettingsPage() {
 
   const profileIcon = getProfileIcon(profileIconId);
 
+  const handleComingSoon = (feature: string) => {
+    show(`${feature} 기능은 준비 중이에요.`, "success");
+  };
+
   const settingsGroups = [
     {
       title: "계정",
       items: [
         { icon: User, label: "계정 정보", desc: email || "-", href: "/settings/account" },
-        { icon: CreditCard, label: "구독 관리", desc: "Free 플랜", href: "/settings/subscription" },
+        { icon: CreditCard, label: "구독 관리", desc: `Free · ${itemCount}/100`, href: "/settings/subscription" },
       ],
     },
     {
       title: "앱 설정",
       items: [
-        { icon: Moon, label: "다크모드", desc: "시스템 설정", href: "#" },
-        { icon: Bell, label: "알림 설정", desc: "", href: "#" },
+        { icon: Moon, label: "다크모드", desc: "시스템 설정", onTap: () => handleComingSoon("다크모드") },
+        { icon: Bell, label: "알림 설정", desc: "", onTap: () => handleComingSoon("알림 설정") },
         { icon: Tags, label: "카테고리 관리", desc: "", href: "/settings/categories" },
         { icon: Database, label: "저장 용량", desc: `${itemCount}개`, href: "/settings/subscription" },
       ],
@@ -58,8 +64,8 @@ export default function SettingsPage() {
     {
       title: "기타",
       items: [
-        { icon: Shield, label: "개인정보 처리방침", desc: "", href: "#" },
-        { icon: HelpCircle, label: "도움말", desc: "", href: "#" },
+        { icon: Shield, label: "개인정보 처리방침", desc: "", onTap: () => handleComingSoon("개인정보 처리방침") },
+        { icon: HelpCircle, label: "도움말", desc: "", onTap: () => handleComingSoon("도움말") },
       ],
     },
   ];
@@ -88,16 +94,21 @@ export default function SettingsPage() {
       {settingsGroups.map((group) => (
         <section key={group.title} className="bg-white mb-2">
           <p className="px-5 pt-4 pb-2 text-[12px] font-semibold text-text-muted uppercase tracking-wider">{group.title}</p>
-          {group.items.map(({ icon: Icon, label, desc, href }) => (
-            <Link key={label} href={href}>
+          {group.items.map((item) => {
+            const { icon: Icon, label, desc } = item;
+            const inner = (
               <div className="w-full flex items-center gap-4 px-5 py-3.5 active:bg-surface-soft transition-colors">
                 <Icon size={20} className="text-text-muted" strokeWidth={1.5} />
                 <span className="flex-1 text-left text-[15px] text-text-primary">{label}</span>
                 {desc && <span className="text-[13px] text-text-muted">{desc}</span>}
                 <ChevronRight size={16} className="text-text-placeholder" />
               </div>
-            </Link>
-          ))}
+            );
+            if ("href" in item && item.href) {
+              return <Link key={label} href={item.href}>{inner}</Link>;
+            }
+            return <button key={label} onClick={"onTap" in item ? item.onTap : undefined} className="w-full">{inner}</button>;
+          })}
         </section>
       ))}
 

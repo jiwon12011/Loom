@@ -41,7 +41,7 @@ export default function TabBar() {
 
           if (tab.id === "add") {
             return (
-              <Link key={tab.id} href={tab.href} className="flex items-center justify-center">
+              <Link key={tab.id} href={tab.href} aria-label="새로 저장" className="flex items-center justify-center">
                 <div className="w-11 h-11 rounded-full bg-[var(--profile-accent)] flex items-center justify-center -mt-3 shadow-[0_8px_22px_var(--profile-glow)] transition-colors">
                   <Plus size={22} className="text-white" strokeWidth={2.5} />
                 </div>

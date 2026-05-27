@@ -14,8 +14,21 @@ export default function LoginPage() {
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [resetSent, setResetSent] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   const canSubmit = email.includes("@") && password.length >= 1;
+
+  const handleResetPassword = async () => {
+    if (!email.includes("@")) {
+      setError("이메일을 먼저 입력해주세요.");
+      return;
+    }
+    setResetLoading(true);
+    await supabase.auth.resetPasswordForEmail(email);
+    setResetLoading(false);
+    setResetSent(true);
+  };
 
   const handleLogin = async () => {
     if (!canSubmit) return;
@@ -58,7 +71,7 @@ export default function LoginPage() {
           />
         </div>
 
-        <div className="mb-6">
+        <div className="mb-2">
           <label className="text-[13px] font-semibold text-text-secondary mb-1.5 block">비밀번호</label>
           <div className="relative">
             <input
@@ -73,6 +86,20 @@ export default function LoginPage() {
               {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
+        </div>
+
+        <div className="mb-6 text-right">
+          {resetSent ? (
+            <p className="text-[13px] text-brand-purple">재설정 링크를 이메일로 보냈어요!</p>
+          ) : (
+            <button
+              onClick={handleResetPassword}
+              disabled={resetLoading}
+              className="text-[13px] text-text-muted hover:text-brand-purple transition-colors"
+            >
+              {resetLoading ? "발송 중..." : "비밀번호를 잊으셨나요?"}
+            </button>
+          )}
         </div>
 
         <button

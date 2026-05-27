@@ -34,6 +34,9 @@ export default function SearchPage() {
   const [selectMode, setSelectMode] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const [aiResultIds, setAiResultIds] = useState<string[]>([]);
+  const [searchMode, setSearchMode] = useState<"ai" | "local" | null>(null);
 
   useEffect(() => {
     fetchAll();
@@ -52,12 +55,66 @@ export default function SearchPage() {
     setLoading(false);
   };
 
-  const filtered = allItems
-    .filter(i => activeFilter === "all" || i.content_type === activeFilter)
-    .filter(i => !query.trim() ||
-      i.original_content.toLowerCase().includes(query.toLowerCase()) ||
-      i.category?.toLowerCase().includes(query.toLowerCase()) ||
-      i.summary?.toLowerCase().includes(query.toLowerCase()));
+  useEffect(() => {
+    const trimmed = query.trim();
+    if (!trimmed) {
+      setAiResultIds([]);
+      setSearchMode(null);
+      setSearching(false);
+      return;
+    }
+
+    const timer = window.setTimeout(async () => {
+      setSearching(true);
+      try {
+        const res = await fetch("/api/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: trimmed,
+            items: allItems.map(({ id, original_content, content_type, category, summary }) => ({
+              id,
+              original_content,
+              content_type,
+              category,
+              summary,
+            })),
+          }),
+        });
+        const json = await res.json();
+        setAiResultIds(Array.isArray(json.ids) ? json.ids : []);
+        setSearchMode(json.mode === "ai" ? "ai" : "local");
+      } catch {
+        setAiResultIds([]);
+        setSearchMode("local");
+      } finally {
+        setSearching(false);
+      }
+    }, 350);
+
+    return () => window.clearTimeout(timer);
+  }, [query, allItems]);
+
+  const locallyFiltered = allItems.filter(i => !query.trim() ||
+    i.original_content.toLowerCase().includes(query.toLowerCase()) ||
+    i.category?.toLowerCase().includes(query.toLowerCase()) ||
+    i.summary?.toLowerCase().includes(query.toLowerCase()));
+
+  const aiRanked = query.trim()
+    ? aiResultIds
+        .map((id) => allItems.find((item) => item.id === id))
+        .filter((item): item is Item => Boolean(item))
+    : allItems;
+
+  const baseResults = query.trim()
+    ? (aiResultIds.length > 0 ? aiRanked : locallyFiltered)
+    : allItems;
+
+  const filtered = baseResults.filter(i =>
+    activeFilter === "all" ||
+    i.content_type === activeFilter ||
+    (activeFilter === "text" && i.content_type === "mixed")
+  );
 
   const toggleSelect = (id: string) => {
     setSelected(prev => {
@@ -149,9 +206,16 @@ export default function SearchPage() {
       ) : (
         <>
           <div className="px-5 py-3">
-            <h3 className="text-[15px] font-bold text-text-primary">
-              {query.trim() ? `검색 결과 ${filtered.length}개` : `전체 ${filtered.length}개`}
-            </h3>
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-[15px] font-bold text-text-primary">
+                {query.trim() ? `검색 결과 ${filtered.length}개` : `전체 ${filtered.length}개`}
+              </h3>
+              {query.trim() && (
+                <span className="text-[12px] font-semibold text-brand-purple">
+                  {searching ? "AI 검색 중..." : searchMode === "ai" ? "AI 검색" : "기본 검색"}
+                </span>
+              )}
+            </div>
           </div>
           {filtered.length === 0 ? (
             <div className="text-center py-16 px-8">

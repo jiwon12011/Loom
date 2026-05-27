@@ -40,7 +40,7 @@ export default function SignupPage() {
   if (done) {
     return (
       <div className="min-h-screen bg-surface flex flex-col items-center justify-center px-6 text-center">
-        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-6">
+        <div className="w-16 h-16 rounded-full bg-green-500/15 flex items-center justify-center mb-6">
           <Check size={32} className="text-green-500" strokeWidth={2.5} />
         </div>
         <h1 className="text-[22px] font-bold text-text-primary mb-3">이메일을 확인해주세요</h1>
@@ -73,7 +73,7 @@ export default function SignupPage() {
         <p className="text-[14px] text-text-muted mb-8">Loom과 함께 기억을 정리하세요.</p>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-[13px] text-red-600">
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-[13px] text-red-400">
             {error}
           </div>
         )}
@@ -89,7 +89,7 @@ export default function SignupPage() {
           <div className="relative">
             <input type={showPw ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="8자 이상 입력하세요"
               className="w-full bg-surface-soft border border-border rounded-xl px-4 py-3.5 pr-12 text-[15px] text-text-primary outline-none placeholder:text-text-placeholder focus:border-brand-purple transition-colors" />
-            <button onClick={() => setShowPw(!showPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted">
+            <button onClick={() => setShowPw(!showPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors">
               {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>

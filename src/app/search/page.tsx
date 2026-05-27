@@ -247,7 +247,7 @@ function SearchContent() {
                     key={item.id}
                     onClick={() => toggleSelect(item.id)}
                     className={`w-full text-left border rounded-2xl p-4 transition-colors ${
-                      isSelected ? "border-brand-purple bg-purple-50" : "border-border bg-surface"
+                      isSelected ? "border-brand-purple bg-brand-purple/10" : "border-border bg-surface"
                     }`}
                   >
                     <div className="flex gap-3 items-start">

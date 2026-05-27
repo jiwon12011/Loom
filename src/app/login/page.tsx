@@ -55,7 +55,7 @@ export default function LoginPage() {
         <p className="text-[14px] text-text-muted mb-8">기억을 저장하고 다시 찾아보세요.</p>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-[13px] text-red-600">
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-[13px] text-red-400">
             {error}
           </div>
         )}
@@ -82,7 +82,7 @@ export default function LoginPage() {
               placeholder="비밀번호를 입력하세요"
               className="w-full bg-surface-soft border border-border rounded-xl px-4 py-3.5 pr-12 text-[15px] text-text-primary outline-none placeholder:text-text-placeholder focus:border-brand-purple transition-colors"
             />
-            <button onClick={() => setShowPw(!showPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted">
+            <button onClick={() => setShowPw(!showPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors">
               {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>

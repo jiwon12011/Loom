@@ -111,7 +111,7 @@ export default function AccountPage() {
       </section>
 
       <section className="bg-surface mt-8">
-        <button onClick={() => setShowDeleteConfirm(true)} className="w-full flex items-center gap-4 px-5 py-4 active:bg-red-50 transition-colors">
+        <button onClick={() => setShowDeleteConfirm(true)} className="w-full flex items-center gap-4 px-5 py-4 active:bg-red-500/10 transition-colors">
           <Trash2 size={20} className="text-red-400" strokeWidth={1.5} />
           <div>
             <p className="text-[15px] text-red-400 font-medium">계정 삭제</p>

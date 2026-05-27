@@ -27,6 +27,10 @@ export default function HomePage() {
   const [profileIconId, setProfileIconId] = useState<string | null>(null);
 
   useEffect(() => {
+    setProfileIconId(localStorage.getItem(PROFILE_ICON_STORAGE_KEY));
+  }, []);
+
+  useEffect(() => {
     const fetchItems = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -47,7 +51,6 @@ export default function HomePage() {
 
       setRecentItems(recent ?? []);
       setFrequentItems(frequent ?? []);
-      setProfileIconId(localStorage.getItem(PROFILE_ICON_STORAGE_KEY));
       setLoading(false);
     };
 
@@ -138,12 +141,12 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="px-5 pt-14 md:pt-8 pb-2 flex items-center justify-between">
-        <div className="flex items-center gap-2 md:hidden">
+      <header className="px-5 pt-14 pb-2 flex items-center justify-between">
+        <div className="flex items-center gap-2">
           <Image src="/logo.png" alt="Loom" width={32} height={32} className="object-contain" />
           <span className="text-[20px] font-semibold text-text-primary tracking-tight">Loom</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-3">
           <Link href="/notifications" className="p-2 text-text-muted relative">
             <Bell size={22} strokeWidth={1.5} />
           </Link>

@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
+import { PROFILE_ICON_STORAGE_KEY, getProfileIcon } from "@/lib/profile-icons";
 
 type Item = {
   id: string;
@@ -23,6 +24,7 @@ export default function HomePage() {
   const [recentItems, setRecentItems] = useState<Item[]>([]);
   const [frequentItems, setFrequentItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
+  const [profileIconId, setProfileIconId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -45,11 +47,14 @@ export default function HomePage() {
 
       setRecentItems(recent ?? []);
       setFrequentItems(frequent ?? []);
+      setProfileIconId(localStorage.getItem(PROFILE_ICON_STORAGE_KEY));
       setLoading(false);
     };
 
     fetchItems();
   }, []);
+
+  const profileIcon = getProfileIcon(profileIconId);
 
   const searchResults = query.trim()
     ? recentItems.filter((item) =>
@@ -143,8 +148,8 @@ export default function HomePage() {
             <Bell size={22} strokeWidth={1.5} />
           </Link>
           <Link href="/settings/account">
-            <div className="w-8 h-8 rounded-full bg-surface-section flex items-center justify-center">
-              <span className="text-[12px] font-bold text-text-muted">U</span>
+            <div className="relative w-8 h-8 rounded-full bg-surface-section overflow-hidden flex items-center justify-center">
+              <Image src={profileIcon.image} alt="" fill sizes="32px" className="object-cover scale-[1.08] translate-y-[1px]" />
             </div>
           </Link>
         </div>

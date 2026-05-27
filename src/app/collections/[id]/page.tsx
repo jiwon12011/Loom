@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowLeft, Trash2, Copy, Loader2 } from "lucide-react";
+import { ArrowLeft, Trash2, Copy, Loader2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/ui/Toast";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import EmptyState from "@/components/ui/EmptyState";
+import BottomSheet from "@/components/ui/BottomSheet";
 import Link from "next/link";
 
 type Item = {
@@ -18,6 +19,8 @@ type Item = {
   collection_item_id: string;
   summary: string | null;
 };
+
+type SavedItem = Omit<Item, "collection_item_id">;
 
 type Collection = {
   id: string;
@@ -33,34 +36,78 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [removeTarget, setRemoveTarget] = useState<string | null>(null);
+  const [showAddSheet, setShowAddSheet] = useState(false);
+  const [availableItems, setAvailableItems] = useState<SavedItem[]>([]);
+  const [addLoading, setAddLoading] = useState(false);
 
-  useEffect(() => {
-    const fetch = async () => {
-      const [{ data: col }, { data: colItems }] = await Promise.all([
-        supabase.from("collections").select("id, name, item_count").eq("id", id).single(),
-        supabase.from("collection_items")
-          .select("id, item_id, items(id, original_content, content_type, category, created_at)")
-          .eq("collection_id", id)
-          .order("created_at", { ascending: false }),
-      ]);
+  const fetchCollection = async () => {
+    const [{ data: col }, { data: colItems }] = await Promise.all([
+      supabase.from("collections").select("id, name, item_count").eq("id", id).single(),
+      supabase.from("collection_items")
+        .select("id, item_id, items(id, original_content, content_type, category, created_at, summary)")
+        .eq("collection_id", id)
+        .order("created_at", { ascending: false }),
+    ]);
 
-      setCollection(col);
-      const mapped = (colItems ?? []).map((ci: any) => ({
-        ...ci.items,
-        collection_item_id: ci.id,
-      }));
-      setItems(mapped);
-      setLoading(false);
-    };
-    fetch();
-  }, [id]);
+    setCollection(col);
+    const mapped = (colItems ?? []).map((ci: any) => ({
+      ...ci.items,
+      collection_item_id: ci.id,
+    }));
+    setItems(mapped);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchCollection(); }, [id]);
 
   const handleRemove = async () => {
     if (!removeTarget) return;
     await supabase.from("collection_items").delete().eq("id", removeTarget);
     setItems(items.filter((i) => i.collection_item_id !== removeTarget));
+    setCollection((prev) => prev ? { ...prev, item_count: Math.max(prev.item_count - 1, 0) } : prev);
     setRemoveTarget(null);
     show("컬렉션에서 제거되었어요", "success");
+  };
+
+  const openAddSheet = async () => {
+    setShowAddSheet(true);
+    setAddLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setAddLoading(false);
+      return;
+    }
+    const { data } = await supabase
+      .from("items")
+      .select("id, original_content, content_type, category, created_at, summary")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+    const existingIds = new Set(items.map((item) => item.id));
+    setAvailableItems((data ?? []).filter((item) => !existingIds.has(item.id)));
+    setAddLoading(false);
+  };
+
+  const handleAddExistingItem = async (item: SavedItem) => {
+    const { data, error } = await supabase
+      .from("collection_items")
+      .insert({ collection_id: id, item_id: item.id })
+      .select("id")
+      .single();
+
+    if (error?.code === "23505") {
+      show("이미 추가된 아이템이에요", "error");
+      setAvailableItems((prev) => prev.filter((i) => i.id !== item.id));
+      return;
+    }
+    if (error || !data) {
+      show("추가 실패. 다시 시도해주세요.", "error");
+      return;
+    }
+
+    setItems((prev) => [{ ...item, collection_item_id: data.id }, ...prev]);
+    setCollection((prev) => prev ? { ...prev, item_count: prev.item_count + 1 } : prev);
+    setAvailableItems((prev) => prev.filter((i) => i.id !== item.id));
+    show("컬렉션에 추가되었어요", "success");
   };
 
   const formatDate = (dateStr: string) => new Date(dateStr).toLocaleDateString("ko-KR", { month: "2-digit", day: "2-digit" });
@@ -80,7 +127,9 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
         <h1 className="text-[17px] font-bold text-text-primary">{collection?.name ?? "컬렉션"}</h1>
-        <div className="w-8" />
+        <button onClick={openAddSheet} className="p-1.5 text-text-primary">
+          <Plus size={22} strokeWidth={1.5} />
+        </button>
       </header>
 
       <div className="px-5 pb-3">
@@ -91,8 +140,8 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
         <EmptyState
           emoji="📁"
           title="컬렉션이 비어있어요"
-          description="아이템 상세 페이지에서 이 컬렉션에 추가해보세요."
-          action={{ label: "아이템 저장하기", onClick: () => router.push("/save") }}
+          description="저장해둔 아이템 중에서 이 컬렉션에 담아보세요."
+          action={{ label: "기존 아이템 추가", onClick: openAddSheet }}
         />
       ) : (
         <div className="px-5 space-y-3 pb-6">
@@ -123,6 +172,39 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
           ))}
         </div>
       )}
+
+      <BottomSheet open={showAddSheet} onClose={() => setShowAddSheet(false)} title="기존 아이템 추가">
+        {addLoading ? (
+          <div className="flex justify-center py-10">
+            <Loader2 size={22} className="animate-spin text-brand-purple" />
+          </div>
+        ) : availableItems.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-[15px] font-semibold text-text-primary">추가할 아이템이 없어요</p>
+            <p className="text-[13px] text-text-muted mt-1.5">이미 모든 저장 아이템이 이 컬렉션에 들어있어요.</p>
+          </div>
+        ) : (
+          <div className="max-h-[55vh] space-y-2 overflow-y-auto">
+            {availableItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => handleAddExistingItem(item)}
+                className="w-full rounded-xl border border-border-light px-4 py-3.5 text-left transition-colors active:bg-surface-soft"
+              >
+                <p className="text-[14px] font-semibold leading-[1.5] text-text-primary line-clamp-2">
+                  {item.content_type === "image" ? (item.summary ?? "이미지") : item.original_content}
+                </p>
+                <div className="mt-2 flex items-center gap-2">
+                  {item.category && (
+                    <span className="rounded bg-surface-section px-2 py-0.5 text-[11px] font-semibold text-brand-purple">{item.category}</span>
+                  )}
+                  <span className="text-[11px] text-text-muted">{formatDate(item.created_at)}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </BottomSheet>
 
       <ConfirmDialog
         open={!!removeTarget}

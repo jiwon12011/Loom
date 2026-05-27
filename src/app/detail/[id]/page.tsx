@@ -9,6 +9,8 @@ import Tag from "@/components/ui/Tag";
 import BottomSheet from "@/components/ui/BottomSheet";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import Link from "next/link";
+import Image from "next/image";
+import { getFolderByDescription } from "@/lib/folders";
 
 type Item = {
   id: string;
@@ -29,7 +31,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showCollectionSheet, setShowCollectionSheet] = useState(false);
-  const [collections, setCollections] = useState<{id: string; name: string; item_count: number}[]>([]);
+  const [collections, setCollections] = useState<{id: string; name: string; item_count: number; description: string | null}[]>([]);
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -74,7 +76,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
   const openCollectionSheet = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    const { data } = await supabase.from("collections").select("id, name, item_count").eq("user_id", user.id).order("created_at", { ascending: false });
+    const { data } = await supabase.from("collections").select("id, name, item_count, description").eq("user_id", user.id).order("created_at", { ascending: false });
     setCollections(data ?? []);
     setShowCollectionSheet(true);
   };
@@ -191,15 +193,21 @@ export default function DetailPage({ params }: { params: { id: string } }) {
           <p className="text-[14px] text-text-muted text-center py-4">컬렉션이 없어요. 먼저 컬렉션을 만들어주세요.</p>
         ) : (
           <div className="space-y-1 max-h-[50vh] overflow-y-auto">
-            {collections.map((col) => (
-              <button key={col.id} onClick={() => handleAddToCollection(col.id, col.name)}
-                className="w-full flex items-center gap-3.5 py-3.5 px-1 rounded-lg active:bg-surface-soft transition-colors">
-                <div className="flex-1 text-left">
-                  <p className="text-[15px] text-text-primary font-medium">{col.name}</p>
-                  <p className="text-[12px] text-text-muted">{col.item_count}개</p>
-                </div>
-              </button>
-            ))}
+            {collections.map((col, index) => {
+              const folder = getFolderByDescription(col.description, index);
+              return (
+                <button key={col.id} onClick={() => handleAddToCollection(col.id, col.name)}
+                  className="w-full flex items-center gap-3.5 py-3.5 px-1 rounded-lg active:bg-surface-soft transition-colors">
+                  <span className="relative h-10 w-12 flex-shrink-0">
+                    <Image src={folder.image} alt="" fill sizes="48px" className="object-contain" />
+                  </span>
+                  <div className="flex-1 text-left">
+                    <p className="text-[15px] text-text-primary font-medium">{col.name}</p>
+                    <p className="text-[12px] text-text-muted">{col.item_count}개</p>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
       </BottomSheet>

@@ -84,6 +84,7 @@ export default function HomePage() {
   };
 
   const getTypeLabel = (type: string) => {
+    if (type === "mixed") return "텍스트+이미지";
     if (type === "image") return "이미지";
     if (type === "link") return "링크";
     return "텍스트";

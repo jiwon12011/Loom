@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { X, FileText, Image, Link2, Sparkles, Loader2 } from "lucide-react";
+import { useRef, useState } from "react";
+import { X, FileText, Image, Link2, Sparkles, Loader2, ImagePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
@@ -15,8 +15,24 @@ const saveTypes = [
 export default function SavePage() {
   const router = useRouter();
   const { show } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [content, setContent] = useState("");
+  const [referenceImage, setReferenceImage] = useState<File | null>(null);
+  const [referencePreview, setReferencePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const handleReferenceImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setReferenceImage(file);
+    setReferencePreview(URL.createObjectURL(file));
+  };
+
+  const clearReferenceImage = () => {
+    setReferenceImage(null);
+    setReferencePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   const handleSave = async () => {
     if (!content.trim()) return;
@@ -28,13 +44,41 @@ export default function SavePage() {
     const { data: inserted, error } = await supabase.from("items").insert({
       user_id: user.id,
       original_content: content.trim(),
-      content_type: "text",
+      content_type: referenceImage ? "mixed" : "text",
     }).select("id").single();
 
     if (error || !inserted) {
       setLoading(false);
       show("저장 실패. 다시 시도해주세요.", "error");
       return;
+    }
+
+    if (referenceImage) {
+      const ext = referenceImage.name.split(".").pop();
+      const path = `${user.id}/${inserted.id}-${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("images")
+        .upload(path, referenceImage, { upsert: false });
+
+      if (uploadError) {
+        setLoading(false);
+        show("텍스트는 저장됐지만 참고 이미지 업로드에 실패했어요.", "error");
+        return;
+      }
+
+      const { data: { publicUrl } } = supabase.storage.from("images").getPublicUrl(path);
+      const { error: imageError } = await supabase.from("item_images").insert({
+        item_id: inserted.id,
+        user_id: user.id,
+        image_url: publicUrl,
+        display_order: 0,
+      });
+
+      if (imageError) {
+        setLoading(false);
+        show("텍스트는 저장됐지만 참고 이미지 연결에 실패했어요.", "error");
+        return;
+      }
     }
 
     try {
@@ -91,6 +135,50 @@ export default function SavePage() {
         />
         {content.trim() && (
           <p className="text-[12px] text-text-muted mt-2 text-right">{content.length}자</p>
+        )}
+      </section>
+
+      <section className="px-5 mb-6">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleReferenceImageChange}
+        />
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <p className="text-[14px] font-semibold text-text-primary">참고 이미지</p>
+            <p className="text-[12px] text-text-muted mt-0.5">텍스트를 설명하는 보조 이미지를 함께 저장해요.</p>
+          </div>
+          {referencePreview && (
+            <button onClick={clearReferenceImage} className="text-[13px] font-semibold text-text-muted">
+              제거
+            </button>
+          )}
+        </div>
+        {referencePreview ? (
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="relative block w-full overflow-hidden rounded-2xl border border-border-light bg-surface-soft"
+          >
+            <img src={referencePreview} alt="참고 이미지 미리보기" className="h-44 w-full object-cover" />
+          </button>
+        ) : (
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full rounded-2xl border border-dashed border-border bg-surface-soft px-4 py-5 text-left active:bg-surface-section transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-brand-purple">
+                <ImagePlus size={22} strokeWidth={1.7} />
+              </span>
+              <div>
+                <p className="text-[14px] font-semibold text-text-primary">이미지 추가</p>
+                <p className="text-[12px] text-text-muted mt-0.5">무드, 레퍼런스, 스크린샷 등을 붙일 수 있어요.</p>
+              </div>
+            </div>
+          </button>
         )}
       </section>
 

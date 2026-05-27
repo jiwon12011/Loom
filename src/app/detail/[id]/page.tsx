@@ -23,6 +23,12 @@ type Item = {
   summary: string | null;
 };
 
+type ItemImage = {
+  id: string;
+  image_url: string;
+  display_order: number;
+};
+
 export default function DetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
   const router = useRouter();
@@ -32,19 +38,28 @@ export default function DetailPage({ params }: { params: { id: string } }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showCollectionSheet, setShowCollectionSheet] = useState(false);
   const [collections, setCollections] = useState<{id: string; name: string; item_count: number; description: string | null}[]>([]);
+  const [referenceImages, setReferenceImages] = useState<ItemImage[]>([]);
 
   useEffect(() => {
     const fetchItem = async () => {
-      const { data, error } = await supabase
-        .from("items")
-        .select("id, original_content, content_type, category, tags, copy_count, created_at, summary")
-        .eq("id", id)
-        .single();
+      const [{ data, error }, { data: images }] = await Promise.all([
+        supabase
+          .from("items")
+          .select("id, original_content, content_type, category, tags, copy_count, created_at, summary")
+          .eq("id", id)
+          .single(),
+        supabase
+          .from("item_images")
+          .select("id, image_url, display_order")
+          .eq("item_id", id)
+          .order("display_order", { ascending: true }),
+      ]);
 
       if (error || !data) {
         router.replace("/");
       } else {
         setItem(data);
+        setReferenceImages(images ?? []);
       }
       setLoading(false);
     };
@@ -130,7 +145,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
         <span className="text-[12px] font-semibold text-brand-purple bg-surface-section px-3 py-1 rounded-md">
-          {item.content_type === "text" ? "텍스트" : "이미지"}
+          {item.content_type === "mixed" ? "텍스트+이미지" : item.content_type === "text" ? "텍스트" : "이미지"}
         </span>
       </header>
 
@@ -143,6 +158,22 @@ export default function DetailPage({ params }: { params: { id: string } }) {
           </h1>
         )}
       </section>
+
+      {referenceImages.length > 0 && item.content_type !== "image" && (
+        <section className="px-5 mb-6">
+          <p className="text-[13px] text-text-muted mb-2.5">참고 이미지</p>
+          <div className="space-y-3">
+            {referenceImages.map((image) => (
+              <img
+                key={image.id}
+                src={image.image_url}
+                alt="참고 이미지"
+                className="w-full rounded-2xl border border-border-light object-contain max-h-96 bg-surface-soft"
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       {item.category && (
         <section className="px-5 mb-5">

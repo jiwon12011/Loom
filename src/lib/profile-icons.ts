@@ -1,0 +1,33 @@
+import type { StaticImageData } from "next/image";
+import personal1 from "../../img/personal_1.png";
+import personal2 from "../../img/personal_2.png";
+import personal3 from "../../img/personal_3.png";
+import personal4 from "../../img/personal_4.png";
+import personal5 from "../../img/personal_5.png";
+import personal6 from "../../img/personal_6.png";
+import personal7 from "../../img/personal_7.png";
+import personal8 from "../../img/personal_8.png";
+import personal9 from "../../img/personal_9.png";
+import personal10 from "../../img/personal_10.png";
+import personal11 from "../../img/personal_11.png";
+import personal12 from "../../img/personal_12.png";
+
+export const PROFILE_ICON_STORAGE_KEY = "loom-profile-icon";
+
+export const PROFILE_ICONS: { id: string; label: string; image: StaticImageData }[] = [
+  { id: "personal_1", label: "프로필 1", image: personal1 },
+  { id: "personal_2", label: "프로필 2", image: personal2 },
+  { id: "personal_3", label: "프로필 3", image: personal3 },
+  { id: "personal_4", label: "프로필 4", image: personal4 },
+  { id: "personal_5", label: "프로필 5", image: personal5 },
+  { id: "personal_6", label: "프로필 6", image: personal6 },
+  { id: "personal_7", label: "프로필 7", image: personal7 },
+  { id: "personal_8", label: "프로필 8", image: personal8 },
+  { id: "personal_9", label: "프로필 9", image: personal9 },
+  { id: "personal_10", label: "프로필 10", image: personal10 },
+  { id: "personal_11", label: "프로필 11", image: personal11 },
+  { id: "personal_12", label: "프로필 12", image: personal12 },
+];
+
+export const getProfileIcon = (id: string | null | undefined) =>
+  PROFILE_ICONS.find((icon) => icon.id === id) ?? PROFILE_ICONS[0];

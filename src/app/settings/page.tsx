@@ -3,15 +3,18 @@
 import { useState, useEffect } from "react";
 import { ChevronRight, User, Moon, Database, CreditCard, Bell, Shield, HelpCircle, LogOut, Tags } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { supabase } from "@/lib/supabase";
+import { PROFILE_ICON_STORAGE_KEY, getProfileIcon } from "@/lib/profile-icons";
 
 export default function SettingsPage() {
   const router = useRouter();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [email, setEmail] = useState("");
   const [itemCount, setItemCount] = useState(0);
+  const [profileIconId, setProfileIconId] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -23,6 +26,7 @@ export default function SettingsPage() {
         .select("id", { count: "exact", head: true })
         .eq("user_id", user.id);
       setItemCount(count ?? 0);
+      setProfileIconId(localStorage.getItem(PROFILE_ICON_STORAGE_KEY));
     };
     load();
   }, []);
@@ -31,6 +35,8 @@ export default function SettingsPage() {
     await supabase.auth.signOut();
     router.replace("/onboarding");
   };
+
+  const profileIcon = getProfileIcon(profileIconId);
 
   const settingsGroups = [
     {
@@ -67,10 +73,8 @@ export default function SettingsPage() {
       <Link href="/settings/account">
         <section className="px-5 py-4 bg-white mb-2 active:bg-surface-soft transition-colors">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-surface-section flex items-center justify-center">
-              <span className="text-[22px] font-bold text-text-muted">
-                {email ? email[0].toUpperCase() : <User size={24} className="text-text-muted" />}
-              </span>
+            <div className="relative w-14 h-14 rounded-full bg-surface-section overflow-hidden flex items-center justify-center">
+              <Image src={profileIcon.image} alt="" fill sizes="56px" className="object-cover" />
             </div>
             <div className="flex-1">
               <p className="text-[16px] font-bold text-text-primary">{email ? email.split("@")[0] : "사용자"}</p>

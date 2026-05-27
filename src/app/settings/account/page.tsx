@@ -2,19 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { ArrowLeft, Mail, Calendar, Database, Trash2, LogOut } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import BottomSheet from "@/components/ui/BottomSheet";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
+import { PROFILE_ICONS, PROFILE_ICON_STORAGE_KEY, getProfileIcon } from "@/lib/profile-icons";
 
 export default function AccountPage() {
   const router = useRouter();
   const { show } = useToast();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showIconPicker, setShowIconPicker] = useState(false);
   const [email, setEmail] = useState("");
   const [joinedAt, setJoinedAt] = useState("");
   const [itemCount, setItemCount] = useState(0);
+  const [profileIconId, setProfileIconId] = useState(PROFILE_ICONS[0].id);
 
   useEffect(() => {
     const load = async () => {
@@ -24,6 +29,7 @@ export default function AccountPage() {
       setJoinedAt(new Date(user.created_at).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" }));
       const { count } = await supabase.from("items").select("id", { count: "exact", head: true }).eq("user_id", user.id);
       setItemCount(count ?? 0);
+      setProfileIconId(localStorage.getItem(PROFILE_ICON_STORAGE_KEY) ?? PROFILE_ICONS[0].id);
     };
     load();
   }, []);
@@ -39,6 +45,15 @@ export default function AccountPage() {
     show("비밀번호 변경 이메일을 발송했어요", "success");
   };
 
+  const handleSelectProfileIcon = (iconId: string) => {
+    localStorage.setItem(PROFILE_ICON_STORAGE_KEY, iconId);
+    setProfileIconId(iconId);
+    setShowIconPicker(false);
+    show("프로필 아이콘이 변경되었어요", "success");
+  };
+
+  const profileIcon = getProfileIcon(profileIconId);
+
   return (
     <div className="min-h-screen bg-surface-soft">
       <header className="px-4 pt-14 pb-3 flex items-center gap-3 bg-white">
@@ -49,11 +64,15 @@ export default function AccountPage() {
       </header>
 
       <section className="bg-white mt-2 px-5 py-6 flex flex-col items-center">
-        <div className="w-20 h-20 rounded-full bg-surface-section flex items-center justify-center mb-4">
-          <span className="text-[28px] font-bold text-text-muted">
-            {email ? email[0].toUpperCase() : "U"}
+        <button
+          onClick={() => setShowIconPicker(true)}
+          className="flex flex-col items-center gap-3 active:scale-[0.98] transition-transform"
+        >
+          <span className="relative w-20 h-20 rounded-full bg-surface-section overflow-hidden flex items-center justify-center">
+            <Image src={profileIcon.image} alt="" fill sizes="80px" className="object-cover" priority />
           </span>
-        </div>
+          <span className="text-[13px] font-semibold text-brand-purple">프로필 아이콘 변경</span>
+        </button>
       </section>
 
       <section className="bg-white mt-2">
@@ -104,6 +123,27 @@ export default function AccountPage() {
         onConfirm={handleLogout}
         onCancel={() => setShowLogoutConfirm(false)}
       />
+
+      <BottomSheet open={showIconPicker} onClose={() => setShowIconPicker(false)} title="프로필 아이콘 선택">
+        <div className="grid grid-cols-4 gap-3">
+          {PROFILE_ICONS.map((icon) => (
+            <button
+              key={icon.id}
+              onClick={() => handleSelectProfileIcon(icon.id)}
+              aria-label={icon.label}
+              className={`flex aspect-square items-center justify-center rounded-2xl border transition-all ${
+                profileIconId === icon.id
+                  ? "border-brand-purple bg-surface-warm shadow-card"
+                  : "border-border-light bg-white active:bg-surface-soft"
+              }`}
+            >
+              <span className="relative h-14 w-14 overflow-hidden rounded-full bg-surface-section">
+                <Image src={icon.image} alt="" fill sizes="56px" className="object-cover" />
+              </span>
+            </button>
+          ))}
+        </div>
+      </BottomSheet>
 
       <ConfirmDialog
         open={showDeleteConfirm}

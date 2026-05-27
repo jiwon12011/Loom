@@ -77,7 +77,20 @@ export default function DetailPage({ params }: { params: { id: string } }) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     const { data } = await supabase.from("collections").select("id, name, item_count, description").eq("user_id", user.id).order("created_at", { ascending: false });
-    setCollections(data ?? []);
+
+    const collectionsWithCounts = await Promise.all((data ?? []).map(async (collection) => {
+      const { count } = await supabase
+        .from("collection_items")
+        .select("id", { count: "exact", head: true })
+        .eq("collection_id", collection.id);
+
+      return {
+        ...collection,
+        item_count: count ?? collection.item_count ?? 0,
+      };
+    }));
+
+    setCollections(collectionsWithCounts);
     setShowCollectionSheet(true);
   };
 

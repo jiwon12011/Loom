@@ -52,7 +52,20 @@ export default function CollectionsPage() {
       .select("id, name, description, item_count")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
-    setCollections(data ?? []);
+
+    const collectionsWithCounts = await Promise.all((data ?? []).map(async (collection) => {
+      const { count } = await supabase
+        .from("collection_items")
+        .select("id", { count: "exact", head: true })
+        .eq("collection_id", collection.id);
+
+      return {
+        ...collection,
+        item_count: count ?? collection.item_count ?? 0,
+      };
+    }));
+
+    setCollections(collectionsWithCounts);
     setLoading(false);
   };
 

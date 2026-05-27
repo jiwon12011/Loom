@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Bell, Search, Copy, ChevronRight, TrendingUp, X } from "lucide-react";
+import { Bell, Search, Copy, ChevronRight, TrendingUp, X, FileText, Image as ImageIcon, Link2 } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
@@ -75,24 +75,55 @@ export default function HomePage() {
     return date.toLocaleDateString("ko-KR", { month: "2-digit", day: "2-digit" }).replace(". ", ".").replace(".", "");
   };
 
+  const getTypeLabel = (type: string) => {
+    if (type === "image") return "이미지";
+    if (type === "link") return "링크";
+    return "텍스트";
+  };
+
+  const getTypeIcon = (type: string) => {
+    if (type === "image") return ImageIcon;
+    if (type === "link") return Link2;
+    return FileText;
+  };
+
+  const canPreviewImage = (content: string) =>
+    /^data:image\//.test(content) || /^https?:\/\/.+\.(png|jpe?g|gif|webp|avif)(\?.*)?$/i.test(content);
+
   const ItemCard = ({ item, variant = "default" }: { item: Item; variant?: "default" | "soft" }) => (
-    <Link href={`/detail/${item.id}`}>
-      <div className={`${variant === "soft" ? "bg-surface-soft border-border-light" : "bg-white border-border"} border rounded-2xl p-4 active:scale-[0.98] transition-transform`}>
-        <div className="flex gap-3">
+    <Link href={`/detail/${item.id}`} className="block">
+      <div className={`${variant === "soft" ? "bg-surface-soft border-border-light hover:border-brand-purple/30" : "bg-white border-border hover:border-brand-purple/35"} border rounded-2xl px-4 py-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated active:translate-y-0 active:scale-[0.98]`}>
+        <div className="flex gap-3.5">
+          {item.content_type === "image" && canPreviewImage(item.original_content) ? (
+            <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-surface-section border border-border-light">
+              <img
+                src={item.original_content}
+                alt=""
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-surface-section border border-border-light text-brand-purple">
+              {(() => {
+                const TypeIcon = getTypeIcon(item.content_type);
+                return <TypeIcon size={20} strokeWidth={1.8} />;
+              })()}
+            </div>
+          )}
           <div className="flex-1 min-w-0">
-            <p className="text-[14px] text-text-primary font-medium leading-relaxed line-clamp-2">
+            <p className="text-[15px] text-text-primary font-semibold leading-[1.55] line-clamp-2">
               {item.content_type === "image" ? (item.summary ?? "이미지") : item.original_content}
             </p>
-            <div className="flex items-center gap-2 mt-2">
+            <div className="flex items-center gap-2.5 mt-3">
               {item.category && (
-                <span className="text-[11px] font-semibold text-brand-purple bg-white px-1.5 py-0.5 rounded">{item.category}</span>
+                <span className="text-[11px] font-semibold text-brand-purple bg-white px-2 py-0.5 rounded">{item.category}</span>
               )}
-              <span className="text-[11px] text-text-muted">{formatDate(item.created_at)}</span>
-              <span className="text-[11px] text-text-muted">·</span>
-              <span className="text-[11px] text-text-muted">{item.content_type === "text" ? "텍스트" : "이미지"}</span>
+              <span className="text-[12px] text-text-secondary/70">{formatDate(item.created_at)}</span>
+              <span className="text-[12px] text-text-secondary/45 px-0.5">·</span>
+              <span className="text-[12px] text-text-secondary/70">{getTypeLabel(item.content_type)}</span>
             </div>
           </div>
-          <button className="p-2 text-text-muted hover:text-text-primary flex-shrink-0 self-start" onClick={(e) => handleCopy(e, item.original_content)}>
+          <button className="p-2 text-text-muted hover:text-text-primary flex-shrink-0 self-start transition-colors" onClick={(e) => handleCopy(e, item.original_content)}>
             <Copy size={16} strokeWidth={1.5} />
           </button>
         </div>
@@ -119,20 +150,20 @@ export default function HomePage() {
         </div>
       </header>
 
-      <section className="px-5 pt-2 pb-6">
-        <h1 className="text-[26px] font-bold text-text-primary leading-tight">기억을 검색해보세요</h1>
-        <p className="text-[14px] text-text-muted mt-1.5">자연어로 검색하면, 관련된 기억을<br />빠르게 찾아드려요</p>
+      <section className="px-5 pt-3 pb-7">
+        <h1 className="text-[35px] font-bold text-text-primary leading-[1.12]">기억을 검색해보세요</h1>
+        <p className="text-[15px] text-text-secondary mt-3 leading-[1.6]">자연어로 검색하면, 관련된 기억을<br />빠르게 찾아드려요</p>
       </section>
 
-      <section className="px-5 mb-8">
-        <div className="flex items-center gap-3 bg-surface-soft border border-border rounded-xl px-4 py-3.5">
-          <Search size={20} className="text-text-muted flex-shrink-0" strokeWidth={1.5} />
+      <section className="px-5 mb-7">
+        <div className="flex min-h-[64px] items-center gap-3.5 bg-white border border-border-light rounded-2xl px-5 py-4 shadow-elevated transition-all focus-within:border-brand-purple/45 focus-within:shadow-[0_8px_24px_rgba(45,42,51,0.08)]">
+          <Search size={21} className="text-text-secondary flex-shrink-0" strokeWidth={1.8} />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="예) 감성적인 카피 문구"
-            className="flex-1 bg-transparent text-[14px] text-text-primary placeholder:text-text-placeholder outline-none"
+            placeholder="그때 저장했던 릴스 뭐였지?"
+            className="flex-1 bg-transparent text-[15px] text-text-primary placeholder:text-text-muted outline-none"
           />
           {query && (
             <button onClick={() => setQuery("")} className="text-text-muted flex-shrink-0">
@@ -146,7 +177,7 @@ export default function HomePage() {
         <section className="px-5 pb-8">
           <p className="text-[13px] text-text-muted mb-4">검색 결과 {searchResults.length}개</p>
           {searchResults.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {searchResults.map((item) => <ItemCard key={item.id} item={item} />)}
             </div>
           ) : (
@@ -171,25 +202,25 @@ export default function HomePage() {
       ) : (
         <>
           <section className="px-5 mb-8">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <h2 className="text-[17px] font-bold text-text-primary">최근 저장</h2>
               <Link href="/search" className="flex items-center text-[13px] text-text-muted">전체보기 <ChevronRight size={14} /></Link>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {recentItems.map((item) => <ItemCard key={item.id} item={item} />)}
             </div>
           </section>
 
           {frequentItems.some(i => i.copy_count > 0) && (
             <section className="px-5 mb-8">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <h2 className="text-[17px] font-bold text-text-primary">자주 복사</h2>
                   <TrendingUp size={16} className="text-brand-purple" />
                 </div>
                 <Link href="/search" className="flex items-center text-[13px] text-text-muted">전체보기 <ChevronRight size={14} /></Link>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {frequentItems.filter(i => i.copy_count > 0).map((item) => <ItemCard key={item.id} item={item} variant="soft" />)}
               </div>
             </section>

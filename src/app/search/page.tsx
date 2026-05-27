@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { ArrowLeft, Search, X, Copy, Loader2, Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type Item = {
   id: string;
@@ -24,10 +24,11 @@ const FILTERS = [
   { id: "image", label: "이미지" },
 ];
 
-export default function SearchPage() {
+function SearchContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { show } = useToast();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
   const [activeFilter, setActiveFilter] = useState("all");
   const [allItems, setAllItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
@@ -306,6 +307,14 @@ export default function SearchPage() {
         onCancel={() => setShowDeleteConfirm(false)}
       />
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center pt-20"><Loader2 size={24} className="animate-spin text-brand-purple" /></div>}>
+      <SearchContent />
+    </Suspense>
   );
 }
 

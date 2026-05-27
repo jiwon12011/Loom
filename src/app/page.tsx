@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Bell, Search, Copy, ChevronRight, TrendingUp, X, FileText, Image as ImageIcon, Link2 } from "lucide-react";
+import { Bell, Search, Copy, ChevronRight, TrendingUp, FileText, Image as ImageIcon, Link2 } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { PROFILE_ICON_STORAGE_KEY, getProfileIcon } from "@/lib/profile-icons";
 
@@ -20,6 +21,7 @@ type Item = {
 
 export default function HomePage() {
   const { show } = useToast();
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [recentItems, setRecentItems] = useState<Item[]>([]);
   const [frequentItems, setFrequentItems] = useState<Item[]>([]);
@@ -58,13 +60,6 @@ export default function HomePage() {
   }, []);
 
   const profileIcon = getProfileIcon(profileIconId);
-
-  const searchResults = query.trim()
-    ? recentItems.filter((item) =>
-        item.original_content.toLowerCase().includes(query.toLowerCase()) ||
-        item.category?.toLowerCase().includes(query.toLowerCase())
-      )
-    : [];
 
   const handleCopy = (e: React.MouseEvent, content: string) => {
     e.preventDefault();
@@ -179,32 +174,19 @@ export default function HomePage() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onFocus={() => router.push(query.trim() ? `/search?q=${encodeURIComponent(query)}` : "/search")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && query.trim()) {
+                router.push(`/search?q=${encodeURIComponent(query)}`);
+              }
+            }}
             placeholder="그때 저장했던 릴스 뭐였지?"
             className="flex-1 bg-transparent text-[15px] text-text-primary placeholder:text-text-muted outline-none"
           />
-          {query && (
-            <button onClick={() => setQuery("")} className="text-text-muted flex-shrink-0">
-              <X size={16} />
-            </button>
-          )}
         </div>
       </section>
 
-      {query.trim() ? (
-        <section className="relative z-10 px-5 pb-8">
-          <p className="text-[13px] text-text-muted mb-4">검색 결과 {searchResults.length}개</p>
-          {searchResults.length > 0 ? (
-            <div className="space-y-3">
-              {searchResults.map((item) => <ItemCard key={item.id} item={item} />)}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-[15px] text-text-muted">검색 결과가 없어요</p>
-              <p className="text-[13px] text-text-placeholder mt-1">다른 키워드로 검색해보세요</p>
-            </div>
-          )}
-        </section>
-      ) : loading ? (
+      {loading ? (
         <div className="relative z-10 flex justify-center pt-20">
           <div className="w-6 h-6 border-2 border-brand-purple border-t-transparent rounded-full animate-spin" />
         </div>

@@ -101,7 +101,7 @@ export default function SavePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface">
       <header className="px-5 pt-14 pb-3 flex items-center justify-between">
         <h1 className="text-[18px] font-bold text-text-primary">저장하기</h1>
         <button onClick={() => router.back()} className="p-2.5 -mr-1 text-text-muted">
@@ -118,7 +118,7 @@ export default function SavePage() {
               className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-colors ${
                 id === "text"
                   ? "bg-brand-purple text-white border-brand-purple"
-                  : "bg-white text-text-secondary border-border"
+                  : "bg-surface text-text-secondary border-border"
               }`}
             >
               <Icon size={16} strokeWidth={1.5} />
@@ -172,7 +172,7 @@ export default function SavePage() {
             className="w-full rounded-2xl border border-dashed border-border bg-surface-soft px-4 py-5 text-left active:bg-surface-section transition-colors"
           >
             <div className="flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-brand-purple">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface text-brand-purple">
                 <ImagePlus size={22} strokeWidth={1.7} />
               </span>
               <div>

@@ -8,20 +8,60 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-body {
-  font-family: "Pretendard Variable", Pretendard, -apple-system,
-    BlinkMacSystemFont, system-ui, sans-serif;
-  background: #ffffff;
-  color: #1a1721;
-  min-height: 100dvh;
-  position: relative;
-  -webkit-font-smoothing: antialiased;
-}
-
 :root {
+  --brand-purple: 139 126 168;
+  --brand-purple-dark: 110 95 138;
+  --brand-purple-light: 169 154 191;
+  --brand-peach: 212 191 168;
+  --brand-peach-light: 232 216 200;
+
+  --surface: 255 255 255;
+  --surface-soft: 248 247 250;
+  --surface-section: 243 241 246;
+  --surface-warm: 250 248 245;
+
+  --text-primary: 26 23 33;
+  --text-secondary: 74 67 88;
+  --text-muted: 125 117 137;
+  --text-placeholder: 176 169 186;
+
+  --border: 232 228 238;
+  --border-light: 240 237 244;
+
   --profile-accent: #d96fa1;
   --profile-soft: #d96fa1;
   --profile-glow: rgba(217, 111, 161, 0.3);
+}
+
+.dark {
+  --brand-purple: 169 154 191;
+  --brand-purple-dark: 139 126 168;
+  --brand-purple-light: 196 184 214;
+  --brand-peach: 212 191 168;
+  --brand-peach-light: 184 164 142;
+
+  --surface: 26 23 33;
+  --surface-soft: 34 30 44;
+  --surface-section: 42 37 54;
+  --surface-warm: 37 32 48;
+
+  --text-primary: 240 237 244;
+  --text-secondary: 196 189 208;
+  --text-muted: 144 136 160;
+  --text-placeholder: 94 86 112;
+
+  --border: 51 46 64;
+  --border-light: 42 37 54;
+}
+
+body {
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, sans-serif;
+  background: rgb(var(--surface));
+  color: rgb(var(--text-primary));
+  min-height: 100dvh;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
 }
 
 @media (min-width: 768px) {

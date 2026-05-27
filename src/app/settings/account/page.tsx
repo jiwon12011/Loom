@@ -57,14 +57,14 @@ export default function AccountPage() {
 
   return (
     <div className="min-h-screen bg-surface-soft">
-      <header className="px-5 pt-14 pb-3 flex items-center gap-3 bg-white">
+      <header className="px-5 pt-14 pb-3 flex items-center gap-3 bg-surface">
         <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
         <h1 className="text-[18px] font-bold text-text-primary">계정 정보</h1>
       </header>
 
-      <section className="bg-white mt-2 px-5 py-6 flex flex-col items-center">
+      <section className="bg-surface mt-2 px-5 py-6 flex flex-col items-center">
         <button
           onClick={() => setShowIconPicker(true)}
           className="flex flex-col items-center gap-3 active:scale-[0.98] transition-transform"
@@ -76,7 +76,7 @@ export default function AccountPage() {
         </button>
       </section>
 
-      <section className="bg-white mt-2">
+      <section className="bg-surface mt-2">
         {[
           { icon: Mail, label: "이메일", value: email || "-" },
           { icon: Calendar, label: "가입일", value: joinedAt || "-" },
@@ -92,21 +92,21 @@ export default function AccountPage() {
         ))}
       </section>
 
-      <section className="bg-white mt-2">
+      <section className="bg-surface mt-2">
         <button onClick={handlePasswordReset} className="w-full px-5 py-4 text-left active:bg-surface-soft transition-colors">
           <p className="text-[15px] text-text-primary">비밀번호 변경</p>
           <p className="text-[13px] text-text-muted mt-0.5">이메일로 비밀번호 재설정 링크를 보내드려요</p>
         </button>
       </section>
 
-      <section className="bg-white mt-2">
+      <section className="bg-surface mt-2">
         <button onClick={() => setShowLogoutConfirm(true)} className="w-full flex items-center gap-4 px-5 py-4 active:bg-surface-soft transition-colors">
           <LogOut size={20} className="text-text-muted" strokeWidth={1.5} />
           <p className="text-[15px] text-text-primary">로그아웃</p>
         </button>
       </section>
 
-      <section className="bg-white mt-8">
+      <section className="bg-surface mt-8">
         <button onClick={() => setShowDeleteConfirm(true)} className="w-full flex items-center gap-4 px-5 py-4 active:bg-red-50 transition-colors">
           <Trash2 size={20} className="text-red-400" strokeWidth={1.5} />
           <div>
@@ -135,7 +135,7 @@ export default function AccountPage() {
               className={`flex aspect-square items-center justify-center rounded-2xl border transition-all ${
                 profileIconId === icon.id
                   ? "border-brand-purple bg-surface-warm shadow-card"
-                  : "border-border-light bg-white active:bg-surface-soft"
+                  : "border-border-light bg-surface active:bg-surface-soft"
               }`}
             >
               <span className="relative h-14 w-14 overflow-hidden rounded-full bg-surface-section">

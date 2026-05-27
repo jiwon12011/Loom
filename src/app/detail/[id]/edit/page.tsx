@@ -67,14 +67,14 @@ export default function EditPage({ params }: { params: { id: string } }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-surface flex items-center justify-center">
         <Loader2 size={24} className="animate-spin text-brand-purple" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface">
       <header className="px-5 pt-14 pb-3 flex items-center justify-between">
         <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
@@ -108,7 +108,7 @@ export default function EditPage({ params }: { params: { id: string } }) {
               className={`px-3.5 py-2 rounded-lg text-[13px] font-medium border transition-colors ${
                 category === cat
                   ? "bg-brand-purple text-white border-brand-purple"
-                  : "bg-white text-text-secondary border-border"
+                  : "bg-surface text-text-secondary border-border"
               }`}
             >
               {cat}

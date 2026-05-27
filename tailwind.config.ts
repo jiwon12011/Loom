@@ -1,32 +1,35 @@
 import type { Config } from "tailwindcss";
 
+const rgb = (v: string) => `rgb(var(--${v}) / <alpha-value>)`;
+
 const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
         brand: {
-          purple: "#8B7EA8",
-          "purple-dark": "#6E5F8A",
-          "purple-light": "#A99ABF",
-          peach: "#D4BFA8",
-          "peach-light": "#E8D8C8",
+          purple: rgb("brand-purple"),
+          "purple-dark": rgb("brand-purple-dark"),
+          "purple-light": rgb("brand-purple-light"),
+          peach: rgb("brand-peach"),
+          "peach-light": rgb("brand-peach-light"),
         },
         surface: {
-          DEFAULT: "#FFFFFF",
-          soft: "#F8F7FA",
-          section: "#F3F1F6",
-          warm: "#FAF8F5",
+          DEFAULT: rgb("surface"),
+          soft: rgb("surface-soft"),
+          section: rgb("surface-section"),
+          warm: rgb("surface-warm"),
         },
         text: {
-          primary: "#1A1721",
-          secondary: "#4A4358",
-          muted: "#7D7589",
-          placeholder: "#B0A9BA",
+          primary: rgb("text-primary"),
+          secondary: rgb("text-secondary"),
+          muted: rgb("text-muted"),
+          placeholder: rgb("text-placeholder"),
         },
         border: {
-          DEFAULT: "#E8E4EE",
-          light: "#F0EDF4",
+          DEFAULT: rgb("border"),
+          light: rgb("border-light"),
         },
       },
       fontFamily: {

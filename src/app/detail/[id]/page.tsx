@@ -139,7 +139,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-surface flex items-center justify-center">
         <Loader2 size={24} className="animate-spin text-brand-purple" />
       </div>
     );
@@ -166,7 +166,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div className="min-h-screen bg-surface pb-24">
       <header className="px-5 pt-14 pb-3 flex items-center justify-between">
         <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />

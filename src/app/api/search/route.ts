@@ -22,9 +22,14 @@ const localScore = (query: string, item: SearchCandidate) => {
   return q.split(/\s+/).filter((word) => word && text.includes(word)).length;
 };
 
+// 클라이언트(홈/검색)는 최대 200개를 보냅니다. 로컬 폴백과 AI 랭킹의 검색 범위를 일치시키기 위해
+// 동일하게 200개까지 후보로 사용하고, 토큰 예산을 위해 항목별 텍스트 길이를 제한합니다.
+const MAX_CANDIDATES = 200;
+const MAX_ITEM_TEXT = 400;
+
 export async function POST(req: NextRequest) {
   const { query, items } = await req.json() as { query?: string; items?: SearchCandidate[] };
-  const candidates = (items ?? []).slice(0, 80);
+  const candidates = (items ?? []).slice(0, MAX_CANDIDATES);
 
   if (!query?.trim() || candidates.length === 0) {
     return NextResponse.json({ ids: [], mode: "empty" });
@@ -45,7 +50,7 @@ export async function POST(req: NextRequest) {
     id: item.id,
     type: item.content_type,
     category: item.category,
-    text: (item.summary || item.original_content).slice(0, 700),
+    text: (item.summary || item.original_content).slice(0, MAX_ITEM_TEXT),
   }));
 
   try {

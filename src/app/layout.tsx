@@ -6,17 +6,35 @@ import { ToastProvider } from "@/components/ui/Toast";
 import ProfileThemeSync from "@/components/ProfileThemeSync";
 import ThemeSync from "@/components/ThemeSync";
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3000");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Loom - AI 개인 아카이브",
   description: "저장하고, AI가 정리하고, 자연어로 찾는다",
+  applicationName: "Loom",
+  icons: { icon: "/logo.png", apple: "/logo.png" },
+  appleWebApp: { capable: true, title: "Loom", statusBarStyle: "default" },
+  openGraph: {
+    title: "Loom - AI 개인 아카이브",
+    description: "저장하고, AI가 정리하고, 자연어로 찾는다",
+    siteName: "Loom",
+    type: "website",
+    images: ["/logo.png"],
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: "#ffffff",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a1721" },
+  ],
 };
 
 export default function RootLayout({

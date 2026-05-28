@@ -41,7 +41,9 @@ export default function AccountPage() {
 
   const handlePasswordReset = async () => {
     if (!email) return;
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
     if (error) {
       show("발송 실패. 다시 시도해주세요.", "error");
     } else {

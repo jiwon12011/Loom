@@ -62,8 +62,9 @@ export default function SavePage() {
         .upload(path, referenceImage, { upsert: false });
 
       if (uploadError) {
+        await supabase.from("items").delete().eq("id", inserted.id);
         setLoading(false);
-        show("텍스트는 저장됐지만 참고 이미지 업로드에 실패했어요.", "error");
+        show("참고 이미지 업로드에 실패했어요. 다시 시도해주세요.", "error");
         return;
       }
 
@@ -76,8 +77,10 @@ export default function SavePage() {
       });
 
       if (imageError) {
+        await supabase.storage.from("images").remove([path]);
+        await supabase.from("items").delete().eq("id", inserted.id);
         setLoading(false);
-        show("텍스트는 저장됐지만 참고 이미지 연결에 실패했어요.", "error");
+        show("참고 이미지 저장에 실패했어요. 다시 시도해주세요.", "error");
         return;
       }
     }

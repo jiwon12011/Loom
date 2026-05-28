@@ -25,7 +25,9 @@ export default function LoginPage() {
       return;
     }
     setResetLoading(true);
-    await supabase.auth.resetPasswordForEmail(email);
+    await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
     setResetLoading(false);
     setResetSent(true);
   };

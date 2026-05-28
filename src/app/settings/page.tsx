@@ -69,8 +69,8 @@ export default function SettingsPage() {
     {
       title: "기타",
       items: [
-        { icon: Shield, label: "개인정보 처리방침", desc: "", onTap: () => handleComingSoon("개인정보 처리방침") },
-        { icon: HelpCircle, label: "도움말", desc: "", onTap: () => handleComingSoon("도움말") },
+        { icon: Shield, label: "개인정보 처리방침", desc: "", href: "/settings/privacy" },
+        { icon: HelpCircle, label: "도움말", desc: "", href: "/settings/help" },
       ],
     },
   ];

@@ -16,6 +16,7 @@ const HIDDEN_PATHS = [
   "/onboarding",
   "/login",
   "/signup",
+  "/reset-password",
   "/save",
   "/detail",
   "/notifications",

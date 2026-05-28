@@ -254,7 +254,7 @@ function SearchContent() {
                       <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center ${
                         isSelected ? "border-brand-purple bg-brand-purple" : "border-border"
                       }`}>
-                        {isSelected && <div className="w-2 h-2 rounded-full bg-surface_KEEP" />}
+                        {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-[14px] text-text-primary font-medium leading-[1.6] line-clamp-2">
@@ -299,7 +299,7 @@ function SearchContent() {
       )}
 
       {selectMode && selected.size > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 md:left-56 bg-surface border-t border-border px-5 py-4 flex items-center justify-between">
+        <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-[430px] -translate-x-1/2 bg-surface border-t border-border px-5 py-4 flex items-center justify-between md:absolute md:left-0 md:translate-x-0">
           <span className="text-[14px] font-semibold text-text-primary">{selected.size}개 선택됨</span>
           <button
             onClick={() => setShowDeleteConfirm(true)}

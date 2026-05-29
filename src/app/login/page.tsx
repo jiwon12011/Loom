@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
@@ -39,16 +39,60 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) {
-      setError("이메일 또는 비밀번호가 올바르지 않아요.");
+      setError(error.message === "Email not confirmed"
+        ? "이메일 인증이 완료되지 않았어요. 메일함을 확인해주세요."
+        : "이메일 또는 비밀번호가 올바르지 않아요.");
     } else {
       router.push("/");
+    }
+  };
+
+  // 숨겨진 데모 로그인: 로고를 5번 연속 탭하면 데모 계정으로 로그인됩니다.
+  const DEMO_EMAIL = "demo@loom.app";
+  const DEMO_PASSWORD = "loomdemo1234";
+  const tapCount = useRef(0);
+  const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleDemoLogin = async () => {
+    if (loading) return;
+    setError("");
+    setLoading(true);
+    let { error } = await supabase.auth.signInWithPassword({ email: DEMO_EMAIL, password: DEMO_PASSWORD });
+    if (error) {
+      // 데모 계정이 아직 없으면 생성 후 다시 로그인 시도
+      const { error: signUpError } = await supabase.auth.signUp({ email: DEMO_EMAIL, password: DEMO_PASSWORD });
+      if (!signUpError) {
+        ({ error } = await supabase.auth.signInWithPassword({ email: DEMO_EMAIL, password: DEMO_PASSWORD }));
+      } else {
+        error = signUpError;
+      }
+    }
+    setLoading(false);
+    if (error) {
+      setError("데모 로그인에 실패했어요. 잠시 후 다시 시도해주세요.");
+    } else {
+      router.push("/");
+    }
+  };
+
+  const handleLogoTap = () => {
+    tapCount.current += 1;
+    if (tapTimer.current) clearTimeout(tapTimer.current);
+    tapTimer.current = setTimeout(() => { tapCount.current = 0; }, 1500);
+    if (tapCount.current >= 5) {
+      tapCount.current = 0;
+      if (tapTimer.current) clearTimeout(tapTimer.current);
+      handleDemoLogin();
     }
   };
 
   return (
     <div className="min-h-screen bg-surface flex flex-col">
       <div className="flex-1 flex flex-col justify-center px-6">
-        <div className="flex items-center gap-2.5 mb-12">
+        <div
+          onClick={handleLogoTap}
+          className="flex items-center gap-2.5 mb-12 select-none w-fit cursor-default"
+        >
           <Image src="/logo.png" alt="Loom" width={36} height={36} className="object-contain" />
           <span className="text-[24px] font-bold text-text-primary">Loom</span>
         </div>

@@ -26,13 +26,17 @@ export default function SignupPage() {
     if (!canSubmit) return;
     setError("");
     setLoading(true);
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password });
     setLoading(false);
     if (error) {
       setError(error.message === "User already registered"
         ? "이미 가입된 이메일이에요."
         : error.message);
+    } else if (data.session) {
+      // 이메일 인증이 꺼져 있으면 가입 즉시 세션이 발급돼 바로 로그인됩니다.
+      router.replace("/");
     } else {
+      // (이메일 인증이 켜진 경우 대비) 인증 안내 화면
       setDone(true);
     }
   };

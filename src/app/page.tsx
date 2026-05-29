@@ -186,8 +186,8 @@ export default function HomePage() {
               <span className="text-[12px] text-text-secondary/70">{getTypeLabel(item.content_type)}</span>
             </div>
           </div>
-          <button className="p-2.5 text-text-muted hover:text-text-primary flex-shrink-0 self-start transition-colors" onClick={(e) => handleCopy(e, item)}>
-            <Copy size={16} strokeWidth={1.5} />
+          <button className="p-2.5 flex-shrink-0 self-start transition-opacity hover:opacity-60" onClick={(e) => handleCopy(e, item)} style={{ color: "var(--profile-accent)" }}>
+            <Copy size={16} strokeWidth={1.8} />
           </button>
         </div>
       </div>
@@ -196,14 +196,20 @@ export default function HomePage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-surface">
-      <div
-        className="pointer-events-none absolute -left-20 -top-24 h-[520px] w-[360px] bg-[var(--profile-accent)] opacity-[0.16] transition-colors"
-        style={{ clipPath: "ellipse(74% 58% at 0% 0%)" }}
-      />
-      <div
-        className="pointer-events-none absolute -left-24 top-20 h-[520px] w-[260px] bg-[var(--profile-accent)] opacity-[0.08] blur-2xl transition-colors"
-        style={{ clipPath: "ellipse(76% 62% at 0% 18%)" }}
-      />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          className="absolute -left-44 -top-52 h-[560px] w-[560px] rounded-full transition-colors"
+          style={{ background: "radial-gradient(closest-side, var(--profile-accent) 0%, transparent 72%)", opacity: 0.16 }}
+        />
+        <div
+          className="absolute -left-24 -top-28 h-[320px] w-[320px] rounded-full transition-colors"
+          style={{ background: "radial-gradient(closest-side, var(--profile-accent) 0%, transparent 70%)", opacity: 0.14 }}
+        />
+        <div
+          className="absolute -left-16 top-24 h-[260px] w-[260px] rounded-full blur-2xl transition-colors"
+          style={{ background: "radial-gradient(closest-side, var(--profile-accent) 0%, transparent 75%)", opacity: 0.08 }}
+        />
+      </div>
       <header className="relative z-10 px-5 pt-14 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Image src="/logo.png" alt="Loom" width={32} height={32} className="object-contain" />
@@ -232,8 +238,11 @@ export default function HomePage() {
       </section>
 
       <section className="relative z-10 px-5 mb-7">
-        <div className="flex min-h-[64px] items-center gap-3.5 bg-surface border border-border-light rounded-2xl px-5 py-4 shadow-elevated transition-all focus-within:border-brand-purple/45 focus-within:shadow-[0_8px_24px_rgba(45,42,51,0.08)]">
-          <Search size={21} className="text-text-secondary flex-shrink-0" strokeWidth={1.8} />
+        <div
+          className="flex min-h-[64px] items-center gap-3.5 bg-surface-section rounded-2xl px-5 py-4 shadow-elevated transition-all focus-within:shadow-[0_8px_24px_var(--profile-glow)]"
+          style={{ border: "1.5px solid var(--profile-accent)" }}
+        >
+          <Search size={21} className="flex-shrink-0 transition-colors" strokeWidth={1.8} style={{ color: "var(--profile-accent)" }} />
           <input
             type="text"
             value={query}

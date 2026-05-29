@@ -162,8 +162,8 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                   </div>
                 </Link>
                 <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
-                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); const t = item.content_type === "link" ? item.original_content.split("\n")[0] : item.original_content; navigator.clipboard.writeText(t).then(() => show("복사 완료", "copy")).catch(() => show("복사에 실패했어요", "error")); }} className="p-2.5 text-text-muted">
-                    <Copy size={15} strokeWidth={1.5} />
+                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); const t = item.content_type === "link" ? item.original_content.split("\n")[0] : item.original_content; navigator.clipboard.writeText(t).then(() => show("복사 완료", "copy")).catch(() => show("복사에 실패했어요", "error")); }} className="p-2.5 transition-opacity hover:opacity-60" style={{ color: "var(--profile-accent)" }}>
+                    <Copy size={15} strokeWidth={1.8} />
                   </button>
                   <button onClick={() => setRemoveTarget(item.collection_item_id)} className="p-2.5 text-text-muted">
                     <Trash2 size={15} strokeWidth={1.5} />

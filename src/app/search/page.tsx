@@ -285,8 +285,8 @@ function SearchContent() {
                             <span className="text-[11px] text-text-muted">{formatDate(item.created_at)}</span>
                           </div>
                         </div>
-                        <button className="p-2.5 text-text-muted self-start flex-shrink-0" onClick={(e) => handleCopy(e, item)}>
-                          <Copy size={16} strokeWidth={1.5} />
+                        <button className="p-2.5 self-start flex-shrink-0 transition-opacity hover:opacity-60" onClick={(e) => handleCopy(e, item)} style={{ color: "var(--profile-accent)" }}>
+                          <Copy size={16} strokeWidth={1.8} />
                         </button>
                       </div>
                     </div>

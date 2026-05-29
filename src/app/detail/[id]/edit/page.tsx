@@ -76,7 +76,7 @@ export default function EditPage({ params }: { params: { id: string } }) {
   return (
     <div className="min-h-screen bg-surface">
       <header className="px-5 pt-14 pb-3 flex items-center justify-between">
-        <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
+        <button aria-label="뒤로 가기" onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
         <h1 className="text-[18px] font-bold text-text-primary">수정</h1>
@@ -107,7 +107,7 @@ export default function EditPage({ params }: { params: { id: string } }) {
               onClick={() => setCategory(category === cat ? "" : cat)}
               className={`px-3.5 py-2 rounded-lg text-[13px] font-medium border transition-colors ${
                 category === cat
-                  ? "bg-brand-purple text-white border-brand-purple"
+                  ? "btn-accent border-accent"
                   : "bg-surface text-text-secondary border-border"
               }`}
             >

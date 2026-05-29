@@ -166,7 +166,7 @@ export default function CategoriesPage() {
     <div className="min-h-screen bg-surface-soft">
       <header className="px-5 pt-14 pb-3 flex items-center justify-between bg-surface">
         <div className="flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
+          <button aria-label="뒤로 가기" onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
             <ArrowLeft size={22} strokeWidth={1.5} />
           </button>
           <h1 className="text-[18px] font-bold text-text-primary">카테고리 관리</h1>
@@ -219,7 +219,7 @@ export default function CategoriesPage() {
                       if (e.key === "Escape") setEditingId(null);
                     }}
                     autoFocus
-                    className="flex-1 bg-surface-soft border border-brand-purple rounded-lg px-3 py-1.5 text-[14px] text-text-primary outline-none"
+                    className="flex-1 bg-surface-soft border border-accent rounded-lg px-3 py-1.5 text-[14px] text-text-primary outline-none"
                   />
                   <button onClick={() => handleEdit(cat)} className="p-1 text-brand-purple">
                     <Check size={16} strokeWidth={2} />

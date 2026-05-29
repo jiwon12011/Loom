@@ -52,7 +52,7 @@ export default function SignupPage() {
           <span className="font-semibold text-text-primary">{email}</span>로<br />
           인증 메일을 보냈어요. 확인 후 로그인해주세요.
         </p>
-        <Link href="/login" className="w-full flex items-center justify-center bg-brand-purple text-white rounded-xl py-4 text-[15px] font-semibold">
+        <Link href="/login" className="w-full flex items-center justify-center btn-accent rounded-xl py-4 text-[15px] font-semibold">
           로그인하러 가기
         </Link>
       </div>
@@ -62,7 +62,7 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen bg-surface flex flex-col">
       <header className="px-4 pt-14 pb-2">
-        <button onClick={() => router.back()} className="p-1.5 text-text-primary">
+        <button aria-label="뒤로 가기" onClick={() => router.back()} className="p-1.5 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
       </header>
@@ -93,7 +93,7 @@ export default function SignupPage() {
           <div className="relative">
             <input type={showPw ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="8자 이상 입력하세요"
               className="w-full bg-surface-soft border border-border rounded-xl px-4 py-3.5 pr-12 text-[15px] text-text-primary outline-none placeholder:text-text-placeholder focus:border-brand-purple transition-colors" />
-            <button onClick={() => setShowPw(!showPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors">
+            <button aria-label={showPw ? "비밀번호 숨기기" : "비밀번호 표시"} onClick={() => setShowPw(!showPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors">
               {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
@@ -116,8 +116,8 @@ export default function SignupPage() {
         </div>
 
         <button onClick={() => setAgreed(!agreed)} className="flex items-center gap-3 mb-8">
-          <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${agreed ? "bg-brand-purple border-brand-purple" : "border-border"}`}>
-            {agreed && <Check size={13} className="text-white" strokeWidth={3} />}
+          <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${agreed ? "bg-accent border-accent" : "border-border"}`}>
+            {agreed && <Check size={13} strokeWidth={3} style={{ color: "var(--profile-on-accent)" }} />}
           </div>
           <span className="text-[13px] text-text-secondary">이용약관 및 개인정보처리방침에 동의합니다</span>
         </button>
@@ -126,7 +126,7 @@ export default function SignupPage() {
           onClick={handleSignup}
           disabled={!canSubmit}
           className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl text-[15px] font-semibold transition-all ${
-            canSubmit ? "bg-brand-purple text-white active:scale-[0.98]" : "bg-surface-section text-text-muted"
+            canSubmit ? "btn-accent active:scale-[0.98]" : "bg-surface-section text-text-muted"
           }`}
         >
           {loading && <Loader2 size={18} className="animate-spin" />}

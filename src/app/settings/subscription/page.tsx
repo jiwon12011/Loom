@@ -100,7 +100,7 @@ export default function SubscriptionPage() {
   return (
     <div className="min-h-screen bg-surface-soft">
       <header className="px-5 pt-14 pb-3 flex items-center gap-3 bg-surface">
-        <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
+        <button aria-label="뒤로 가기" onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
         <h1 className="text-[18px] font-bold text-text-primary">구독 관리</h1>
@@ -147,7 +147,7 @@ export default function SubscriptionPage() {
             <div
               key={plan.id}
               className={`bg-surface rounded-2xl border-2 p-5 relative ${
-                isCurrent ? "border-brand-purple" : "border-border"
+                isCurrent ? "border-accent" : "border-border"
               }`}
             >
               {plan.popular && (
@@ -180,7 +180,7 @@ export default function SubscriptionPage() {
                 className={`w-full py-3.5 rounded-xl text-[14px] font-semibold transition-all ${
                   isCurrent
                     ? "bg-surface-section text-text-muted"
-                    : "bg-brand-purple text-white active:scale-[0.98]"
+                    : "btn-accent active:scale-[0.98]"
                 }`}
                 disabled={isCurrent}
               >

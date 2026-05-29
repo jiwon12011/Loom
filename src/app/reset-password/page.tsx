@@ -78,7 +78,7 @@ export default function ResetPasswordPage() {
           비밀번호 재설정 링크가 만료되었거나 잘못되었어요.<br />
           로그인 화면에서 다시 요청해주세요.
         </p>
-        <Link href="/login" className="w-full max-w-[320px] flex items-center justify-center bg-brand-purple text-white rounded-xl py-4 text-[15px] font-semibold">
+        <Link href="/login" className="w-full max-w-[320px] flex items-center justify-center btn-accent rounded-xl py-4 text-[15px] font-semibold">
           로그인하러 가기
         </Link>
       </div>
@@ -112,7 +112,7 @@ export default function ResetPasswordPage() {
               placeholder="8자 이상 입력하세요"
               className="w-full bg-surface-soft border border-border rounded-xl px-4 py-3.5 pr-12 text-[15px] text-text-primary outline-none placeholder:text-text-placeholder focus:border-brand-purple transition-colors"
             />
-            <button onClick={() => setShowPw(!showPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors">
+            <button aria-label={showPw ? "비밀번호 숨기기" : "비밀번호 표시"} onClick={() => setShowPw(!showPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors">
               {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
@@ -144,7 +144,7 @@ export default function ResetPasswordPage() {
           onClick={handleSubmit}
           disabled={!canSubmit}
           className={`w-full flex items-center justify-center gap-2 rounded-xl py-4 text-[15px] font-semibold transition-all ${
-            canSubmit ? "bg-brand-purple text-white active:scale-[0.98]" : "bg-surface-section text-text-muted"
+            canSubmit ? "btn-accent active:scale-[0.98]" : "bg-surface-section text-text-muted"
           }`}
         >
           {loading && <Loader2 size={18} className="animate-spin" />}

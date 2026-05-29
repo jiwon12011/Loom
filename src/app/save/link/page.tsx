@@ -127,7 +127,7 @@ export default function SaveLinkPage() {
     <div className="min-h-screen bg-surface">
       <header className="px-5 pt-14 pb-3 flex items-center justify-between">
         <h1 className="text-[18px] font-bold text-text-primary">저장하기</h1>
-        <button onClick={() => router.back()} className="p-2.5 -mr-1 text-text-muted">
+        <button aria-label="뒤로 가기" onClick={() => router.back()} className="p-2.5 -mr-1 text-text-muted">
           <X size={22} strokeWidth={1.5} />
         </button>
       </header>
@@ -140,7 +140,7 @@ export default function SaveLinkPage() {
               onClick={() => { if (id !== "link") router.push(href); }}
               className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-colors ${
                 id === "link"
-                  ? "bg-brand-purple text-white border-brand-purple"
+                  ? "btn-accent border-accent"
                   : "bg-surface text-text-secondary border-border"
               }`}
             >
@@ -168,7 +168,7 @@ export default function SaveLinkPage() {
           <button
             onClick={handleFetch}
             disabled={loading || !url.trim()}
-            className="px-4 bg-brand-purple text-white rounded-xl text-[14px] font-semibold flex-shrink-0 active:scale-[0.98] transition-transform disabled:opacity-50"
+            className="px-4 btn-accent rounded-xl text-[14px] font-semibold flex-shrink-0 active:scale-[0.98] transition-transform disabled:opacity-50"
           >
             {loading ? <Loader2 size={16} className="animate-spin" /> : "불러오기"}
           </button>
@@ -237,7 +237,7 @@ export default function SaveLinkPage() {
           disabled={!preview || saving}
           className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl text-[15px] font-semibold transition-all ${
             preview && !saving
-              ? "bg-brand-purple text-white active:scale-[0.98]"
+              ? "btn-accent active:scale-[0.98]"
               : "bg-surface-section text-text-muted"
           }`}
         >

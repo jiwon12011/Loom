@@ -128,7 +128,7 @@ export default function LoginPage() {
               placeholder="비밀번호를 입력하세요"
               className="w-full bg-surface-soft border border-border rounded-xl px-4 py-3.5 pr-12 text-[15px] text-text-primary outline-none placeholder:text-text-placeholder focus:border-brand-purple transition-colors"
             />
-            <button onClick={() => setShowPw(!showPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors">
+            <button aria-label={showPw ? "비밀번호 숨기기" : "비밀번호 표시"} onClick={() => setShowPw(!showPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors">
               {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
@@ -153,7 +153,7 @@ export default function LoginPage() {
           disabled={!canSubmit || loading}
           className={`w-full flex items-center justify-center gap-2 rounded-xl py-4 text-[15px] font-semibold transition-all mb-4 ${
             canSubmit && !loading
-              ? "bg-brand-purple text-white active:scale-[0.98]"
+              ? "btn-accent active:scale-[0.98]"
               : "bg-surface-section text-text-muted"
           }`}
         >

@@ -169,7 +169,7 @@ function SearchContent() {
   return (
     <div className="min-h-screen bg-surface pb-24">
       <header className="px-5 pt-14 pb-3 flex items-center gap-2">
-        <button onClick={() => { router.back(); }} className="p-2.5 -ml-1 text-text-primary">
+        <button aria-label="뒤로 가기" onClick={() => { router.back(); }} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
         <div className="flex-1 flex items-center gap-2 bg-surface-soft border border-border rounded-xl px-3.5 py-2.5">
@@ -183,7 +183,7 @@ function SearchContent() {
             autoFocus
           />
           {query && (
-            <button onClick={() => setQuery("")} className="text-text-muted">
+            <button aria-label="검색어 지우기" onClick={() => setQuery("")} className="text-text-muted">
               <X size={16} />
             </button>
           )}
@@ -204,7 +204,7 @@ function SearchContent() {
               onClick={() => setActiveFilter(f.id)}
               className={`px-3 py-2.5 text-[13px] font-semibold border-b-2 transition-colors ${
                 activeFilter === f.id
-                  ? "text-text-primary border-brand-purple"
+                  ? "text-text-primary border-accent"
                   : "text-text-muted border-transparent"
               }`}
             >
@@ -247,14 +247,14 @@ function SearchContent() {
                     key={item.id}
                     onClick={() => toggleSelect(item.id)}
                     className={`w-full text-left border rounded-2xl p-4 transition-colors ${
-                      isSelected ? "border-brand-purple bg-brand-purple/10" : "border-border bg-surface"
+                      isSelected ? "border-accent bg-accent-soft" : "border-border bg-surface"
                     }`}
                   >
                     <div className="flex gap-3 items-start">
                       <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center ${
-                        isSelected ? "border-brand-purple bg-brand-purple" : "border-border"
+                        isSelected ? "border-accent bg-accent" : "border-border"
                       }`}>
-                        {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+                        {isSelected && <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "var(--profile-on-accent)" }} />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-[14px] text-text-primary font-medium leading-[1.6] line-clamp-2">
@@ -285,7 +285,7 @@ function SearchContent() {
                             <span className="text-[11px] text-text-muted">{formatDate(item.created_at)}</span>
                           </div>
                         </div>
-                        <button className="p-2.5 self-start flex-shrink-0 transition-opacity hover:opacity-60" onClick={(e) => handleCopy(e, item)} style={{ color: "var(--profile-accent)" }}>
+                        <button aria-label="복사" className="p-2.5 self-start flex-shrink-0 transition-opacity hover:opacity-60" onClick={(e) => handleCopy(e, item)} style={{ color: "var(--profile-accent)" }}>
                           <Copy size={16} strokeWidth={1.8} />
                         </button>
                       </div>

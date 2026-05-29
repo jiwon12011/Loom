@@ -186,7 +186,7 @@ export default function HomePage() {
               <span className="text-[12px] text-text-secondary/70">{getTypeLabel(item.content_type)}</span>
             </div>
           </div>
-          <button className="p-2.5 flex-shrink-0 self-start transition-opacity hover:opacity-60" onClick={(e) => handleCopy(e, item)} style={{ color: "var(--profile-accent)" }}>
+          <button aria-label="복사" className="p-2.5 flex-shrink-0 self-start transition-opacity hover:opacity-60" onClick={(e) => handleCopy(e, item)} style={{ color: "var(--profile-accent)" }}>
             <Copy size={16} strokeWidth={1.8} />
           </button>
         </div>
@@ -251,7 +251,7 @@ export default function HomePage() {
             className="flex-1 bg-transparent text-[15px] text-text-primary placeholder:text-text-muted outline-none"
           />
           {query && (
-            <button onClick={() => setQuery("")} className="text-text-muted flex-shrink-0">
+            <button aria-label="검색어 지우기" onClick={() => setQuery("")} className="text-text-muted flex-shrink-0">
               <X size={16} />
             </button>
           )}
@@ -291,7 +291,7 @@ export default function HomePage() {
         <div className="relative z-10 text-center py-20 px-8">
           <p className="text-[18px] font-bold text-text-primary mb-2">아직 저장된 항목이 없어요</p>
           <p className="text-[14px] text-text-muted mb-8">아래 + 버튼을 눌러 첫 번째 기억을 저장해보세요</p>
-          <Link href="/save" className="inline-flex items-center gap-2 bg-brand-purple text-white px-6 py-3 rounded-xl text-[14px] font-semibold">
+          <Link href="/save" className="inline-flex items-center gap-2 btn-accent px-6 py-3 rounded-xl text-[14px] font-semibold">
             저장하러 가기
           </Link>
         </div>

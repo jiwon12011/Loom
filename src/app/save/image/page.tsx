@@ -92,7 +92,7 @@ export default function SaveImagePage() {
     <div className="min-h-screen bg-surface">
       <header className="px-5 pt-14 pb-3 flex items-center justify-between">
         <h1 className="text-[18px] font-bold text-text-primary">저장하기</h1>
-        <button onClick={() => router.back()} className="p-2.5 -mr-1 text-text-muted">
+        <button aria-label="뒤로 가기" onClick={() => router.back()} className="p-2.5 -mr-1 text-text-muted">
           <X size={22} strokeWidth={1.5} />
         </button>
       </header>
@@ -105,7 +105,7 @@ export default function SaveImagePage() {
               onClick={() => { if (id !== "image") router.push(href); }}
               className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-colors ${
                 id === "image"
-                  ? "bg-brand-purple text-white border-brand-purple"
+                  ? "btn-accent border-accent"
                   : "bg-surface text-text-secondary border-border"
               }`}
             >
@@ -174,7 +174,7 @@ export default function SaveImagePage() {
           onClick={handleSave}
           disabled={!file || saving}
           className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl text-[15px] font-semibold transition-all ${
-            file && !saving ? "bg-brand-purple text-white active:scale-[0.98]" : "bg-surface-section text-text-muted"
+            file && !saving ? "btn-accent active:scale-[0.98]" : "bg-surface-section text-text-muted"
           }`}
         >
           {saving && <Loader2 size={18} className="animate-spin" />}

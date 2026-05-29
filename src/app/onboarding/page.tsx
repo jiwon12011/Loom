@@ -64,7 +64,7 @@ export default function OnboardingPage() {
         {current < slides.length - 1 ? (
           <button
             onClick={() => setCurrent(current + 1)}
-            className="w-full flex items-center justify-center gap-2 bg-brand-purple text-white rounded-xl py-4 text-[15px] font-semibold active:scale-[0.98] transition-transform"
+            className="w-full flex items-center justify-center gap-2 btn-accent rounded-xl py-4 text-[15px] font-semibold active:scale-[0.98] transition-transform"
           >
             다음
             <ArrowRight size={18} />
@@ -72,7 +72,7 @@ export default function OnboardingPage() {
         ) : (
           <Link
             href="/login"
-            className="w-full flex items-center justify-center gap-2 bg-brand-purple text-white rounded-xl py-4 text-[15px] font-semibold active:scale-[0.98] transition-transform"
+            className="w-full flex items-center justify-center gap-2 btn-accent rounded-xl py-4 text-[15px] font-semibold active:scale-[0.98] transition-transform"
           >
             시작하기
           </Link>

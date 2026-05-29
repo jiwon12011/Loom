@@ -64,7 +64,7 @@ export default function AccountPage() {
   return (
     <div className="min-h-screen bg-surface-soft">
       <header className="px-5 pt-14 pb-3 flex items-center gap-3 bg-surface">
-        <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
+        <button aria-label="뒤로 가기" onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
         <h1 className="text-[18px] font-bold text-text-primary">계정 정보</h1>
@@ -140,7 +140,7 @@ export default function AccountPage() {
               aria-label={icon.label}
               className={`flex aspect-square items-center justify-center rounded-2xl border transition-all ${
                 profileIconId === icon.id
-                  ? "border-brand-purple bg-surface-warm shadow-card"
+                  ? "border-accent bg-surface-warm shadow-card"
                   : "border-border-light bg-surface active:bg-surface-soft"
               }`}
             >

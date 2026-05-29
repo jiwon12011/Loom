@@ -173,7 +173,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
   return (
     <div className="min-h-screen bg-surface pb-24">
       <header className="px-5 pt-14 pb-3 flex items-center justify-between">
-        <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
+        <button aria-label="뒤로 가기" onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
         <span className="text-[12px] font-semibold text-brand-purple bg-surface-section px-3 py-1 rounded-md">
@@ -261,7 +261,7 @@ export default function DetailPage({ params }: { params: { id: string } }) {
       </section>
 
       <section className="px-5 mb-5">
-        <button onClick={handleCopy} className="w-full flex items-center justify-center gap-2 text-white rounded-xl py-4 text-[15px] font-semibold active:scale-[0.98] transition-transform" style={{ backgroundColor: "var(--profile-accent)" }}>
+        <button onClick={handleCopy} className="w-full flex items-center justify-center gap-2 btn-accent rounded-xl py-4 text-[15px] font-semibold active:scale-[0.98] transition-transform">
           <Copy size={18} strokeWidth={2} />
           복사하기
         </button>

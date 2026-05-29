@@ -215,7 +215,7 @@ export default function CollectionsPage() {
               {FOLDERS.map((folder) => (
                 <button key={folder.id} type="button" onClick={() => setSelectedFolder(folder.id)}
                   className={`flex h-16 items-center justify-center rounded-xl border transition-all ${
-                    selectedFolder === folder.id ? "border-brand-purple bg-surface-warm shadow-card" : "border-border-light bg-surface active:bg-surface-soft"
+                    selectedFolder === folder.id ? "border-accent bg-surface-warm shadow-card" : "border-border-light bg-surface active:bg-surface-soft"
                   }`}>
                   <span className="relative h-10 w-12">
                     <Image src={folder.image} alt="" fill sizes="48px" className="object-contain" />
@@ -226,7 +226,7 @@ export default function CollectionsPage() {
           </div>
           <button onClick={handleCreate} disabled={!newName.trim() || creating}
             className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl text-[15px] font-semibold transition-all ${
-              newName.trim() && !creating ? "bg-brand-purple text-white" : "bg-surface-section text-text-muted"
+              newName.trim() && !creating ? "btn-accent" : "bg-surface-section text-text-muted"
             }`}>
             {creating && <Loader2 size={16} className="animate-spin" />}
             만들기
@@ -264,7 +264,7 @@ export default function CollectionsPage() {
           />
           <button onClick={handleRename} disabled={!renameName.trim()}
             className={`w-full py-4 rounded-xl text-[15px] font-semibold transition-all ${
-              renameName.trim() ? "bg-brand-purple text-white" : "bg-surface-section text-text-muted"
+              renameName.trim() ? "btn-accent" : "bg-surface-section text-text-muted"
             }`}>
             변경하기
           </button>
@@ -278,7 +278,7 @@ export default function CollectionsPage() {
             {FOLDERS.map((folder) => (
               <button key={folder.id} type="button" onClick={() => setColorFolder(folder.id)}
                 className={`flex h-16 items-center justify-center rounded-xl border transition-all ${
-                  colorFolder === folder.id ? "border-brand-purple bg-surface-warm shadow-card" : "border-border-light bg-surface active:bg-surface-soft"
+                  colorFolder === folder.id ? "border-accent bg-surface-warm shadow-card" : "border-border-light bg-surface active:bg-surface-soft"
                 }`}>
                 <span className="relative h-10 w-12">
                   <Image src={folder.image} alt="" fill sizes="48px" className="object-contain" />
@@ -287,7 +287,7 @@ export default function CollectionsPage() {
             ))}
           </div>
           <button onClick={handleColorChange}
-            className="w-full py-4 rounded-xl text-[15px] font-semibold bg-brand-purple text-white transition-all">
+            className="w-full py-4 rounded-xl text-[15px] font-semibold btn-accent transition-all">
             변경하기
           </button>
         </div>

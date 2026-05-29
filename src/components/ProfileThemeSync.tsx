@@ -8,6 +8,7 @@ const applyTheme = (iconId: string | null) => {
   document.documentElement.style.setProperty("--profile-accent", theme.accent);
   document.documentElement.style.setProperty("--profile-soft", theme.soft);
   document.documentElement.style.setProperty("--profile-glow", theme.glow);
+  document.documentElement.style.setProperty("--profile-on-accent", theme.onAccent);
 };
 
 export default function ProfileThemeSync() {

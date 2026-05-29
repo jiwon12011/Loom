@@ -44,7 +44,7 @@ export default function TabBar() {
             return (
               <Link key={tab.id} href={tab.href} aria-label="새로 저장" className="flex items-center justify-center">
                 <div className="w-11 h-11 rounded-full bg-[var(--profile-accent)] flex items-center justify-center -mt-3 shadow-[0_4px_10px_rgba(0,0,0,0.12)] transition-colors">
-                  <Plus size={22} className="text-white" strokeWidth={2.5} />
+                  <Plus size={22} strokeWidth={2.5} style={{ color: "var(--profile-on-accent)" }} />
                 </div>
               </Link>
             );

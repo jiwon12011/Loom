@@ -14,7 +14,7 @@ export default function EmptyState({ emoji, title, description, action }: EmptyS
       {action && (
         <button
           onClick={action.onClick}
-          className="mt-6 px-6 py-3 bg-brand-purple text-white rounded-xl text-[14px] font-semibold active:scale-[0.98] transition-transform focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-purple focus-visible:outline-offset-2"
+          className="mt-6 px-6 py-3 btn-accent rounded-xl text-[14px] font-semibold active:scale-[0.98] transition-transform focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--profile-accent)]"
         >
           {action.label}
         </button>

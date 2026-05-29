@@ -31,6 +31,7 @@
   --profile-accent: #8d69cd;
   --profile-soft: #8d69cd;
   --profile-glow: rgba(141, 105, 205, 0.3);
+  --profile-on-accent: #ffffff;
 }
 
 .dark {
@@ -71,6 +72,24 @@ body {
 }
 
 @layer utilities {
+  /* 테마 액센트 기반 버튼/선택 상태 (프로필 테마색을 따라감) */
+  .btn-accent {
+    background-color: var(--profile-accent);
+    color: var(--profile-on-accent);
+  }
+  .bg-accent {
+    background-color: var(--profile-accent);
+  }
+  .bg-accent-soft {
+    background-color: color-mix(in srgb, var(--profile-accent) 12%, transparent);
+  }
+  .text-accent {
+    color: var(--profile-accent);
+  }
+  .border-accent {
+    border-color: var(--profile-accent);
+  }
+
   .safe-bottom {
     padding-bottom: max(env(safe-area-inset-bottom), 16px);
   }

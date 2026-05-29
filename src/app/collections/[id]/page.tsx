@@ -125,7 +125,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
   return (
     <div className="min-h-screen bg-surface">
       <header className="px-5 pt-14 pb-3 flex items-center justify-between">
-        <button onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
+        <button aria-label="뒤로 가기" onClick={() => router.back()} className="p-2.5 -ml-1 text-text-primary">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
         <h1 className="text-[18px] font-bold text-text-primary">{collection?.name ?? "컬렉션"}</h1>
@@ -162,10 +162,10 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                   </div>
                 </Link>
                 <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
-                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); const t = item.content_type === "link" ? item.original_content.split("\n")[0] : item.original_content; navigator.clipboard.writeText(t).then(() => show("복사 완료", "copy")).catch(() => show("복사에 실패했어요", "error")); }} className="p-2.5 transition-opacity hover:opacity-60" style={{ color: "var(--profile-accent)" }}>
+                  <button aria-label="복사" onClick={(e) => { e.preventDefault(); e.stopPropagation(); const t = item.content_type === "link" ? item.original_content.split("\n")[0] : item.original_content; navigator.clipboard.writeText(t).then(() => show("복사 완료", "copy")).catch(() => show("복사에 실패했어요", "error")); }} className="p-2.5 transition-opacity hover:opacity-60" style={{ color: "var(--profile-accent)" }}>
                     <Copy size={15} strokeWidth={1.8} />
                   </button>
-                  <button onClick={() => setRemoveTarget(item.collection_item_id)} className="p-2.5 text-text-muted">
+                  <button aria-label="컬렉션에서 삭제" onClick={() => setRemoveTarget(item.collection_item_id)} className="p-2.5 text-text-muted">
                     <Trash2 size={15} strokeWidth={1.5} />
                   </button>
                 </div>

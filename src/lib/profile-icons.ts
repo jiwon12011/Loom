@@ -37,7 +37,11 @@ export const PROFILE_ICONS: { id: string; label: string; image: StaticImageData;
   { id: "personal_12", label: "프로필 12", image: personal12, theme: { accent: "#303038", soft: "#303038", glow: "rgba(48, 48, 56, 0.30)" } },
 ];
 
+export const DEFAULT_PROFILE_ICON_ID = "personal_7";
+
 export const getProfileIcon = (id: string | null | undefined) =>
-  PROFILE_ICONS.find((icon) => icon.id === id) ?? PROFILE_ICONS[0];
+  PROFILE_ICONS.find((icon) => icon.id === id) ??
+  PROFILE_ICONS.find((icon) => icon.id === DEFAULT_PROFILE_ICON_ID) ??
+  PROFILE_ICONS[0];
 
 export const getProfileTheme = (id: string | null | undefined) => getProfileIcon(id).theme;

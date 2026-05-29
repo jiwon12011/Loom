@@ -8,7 +8,7 @@ import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import BottomSheet from "@/components/ui/BottomSheet";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
-import { PROFILE_ICONS, PROFILE_ICON_STORAGE_KEY, PROFILE_THEME_EVENT, getProfileIcon } from "@/lib/profile-icons";
+import { PROFILE_ICONS, PROFILE_ICON_STORAGE_KEY, PROFILE_THEME_EVENT, DEFAULT_PROFILE_ICON_ID, getProfileIcon } from "@/lib/profile-icons";
 
 export default function AccountPage() {
   const router = useRouter();
@@ -19,7 +19,7 @@ export default function AccountPage() {
   const [email, setEmail] = useState("");
   const [joinedAt, setJoinedAt] = useState("");
   const [itemCount, setItemCount] = useState(0);
-  const [profileIconId, setProfileIconId] = useState(PROFILE_ICONS[0].id);
+  const [profileIconId, setProfileIconId] = useState(DEFAULT_PROFILE_ICON_ID);
 
   useEffect(() => {
     const load = async () => {
@@ -29,7 +29,7 @@ export default function AccountPage() {
       setJoinedAt(new Date(user.created_at).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" }));
       const { count } = await supabase.from("items").select("id", { count: "exact", head: true }).eq("user_id", user.id);
       setItemCount(count ?? 0);
-      setProfileIconId(localStorage.getItem(PROFILE_ICON_STORAGE_KEY) ?? PROFILE_ICONS[0].id);
+      setProfileIconId(localStorage.getItem(PROFILE_ICON_STORAGE_KEY) ?? DEFAULT_PROFILE_ICON_ID);
     };
     load();
   }, []);

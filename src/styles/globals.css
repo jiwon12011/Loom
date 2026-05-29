@@ -28,9 +28,9 @@
   --border: 232 228 238;
   --border-light: 240 237 244;
 
-  --profile-accent: #d96fa1;
-  --profile-soft: #d96fa1;
-  --profile-glow: rgba(217, 111, 161, 0.3);
+  --profile-accent: #8d69cd;
+  --profile-soft: #8d69cd;
+  --profile-glow: rgba(141, 105, 205, 0.3);
 }
 
 .dark {

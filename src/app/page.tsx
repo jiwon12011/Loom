@@ -198,16 +198,12 @@ export default function HomePage() {
     <div className="relative min-h-screen overflow-hidden bg-surface">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
-          className="absolute -left-44 -top-52 h-[560px] w-[560px] rounded-full transition-colors"
-          style={{ background: "radial-gradient(closest-side, var(--profile-accent) 0%, transparent 72%)", opacity: 0.16 }}
+          className="absolute -left-40 -top-48 h-[520px] w-[520px] rounded-full transition-colors"
+          style={{ background: "radial-gradient(closest-side, var(--profile-accent) 74%, transparent 90%)", opacity: 0.14 }}
         />
         <div
-          className="absolute -left-24 -top-28 h-[320px] w-[320px] rounded-full transition-colors"
-          style={{ background: "radial-gradient(closest-side, var(--profile-accent) 0%, transparent 70%)", opacity: 0.14 }}
-        />
-        <div
-          className="absolute -left-16 top-24 h-[260px] w-[260px] rounded-full blur-2xl transition-colors"
-          style={{ background: "radial-gradient(closest-side, var(--profile-accent) 0%, transparent 75%)", opacity: 0.08 }}
+          className="absolute -left-24 -top-32 h-[340px] w-[340px] rounded-full transition-colors"
+          style={{ background: "radial-gradient(closest-side, var(--profile-accent) 76%, transparent 92%)", opacity: 0.16 }}
         />
       </div>
       <header className="relative z-10 px-5 pt-14 pb-3 flex items-center justify-between">

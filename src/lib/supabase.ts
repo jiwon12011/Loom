@@ -1,7 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// env 값에 섞인 줄바꿈/공백/따옴표를 제거한다. (대시보드에 붙여넣을 때 끝에 \n이 들어가면
+// fetch 헤더가 깨져 "Failed to execute 'fetch' on 'Window': Invalid value"가 난다)
+const clean = (v: string | undefined) =>
+  v?.trim().replace(/^['"]|['"]$/g, "") || undefined;
+
+const supabaseUrl = clean(process.env.NEXT_PUBLIC_SUPABASE_URL);
+const supabaseAnonKey = clean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(

@@ -14,5 +14,13 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: "/logo-512.webp", sizes: "512x512", type: "image/webp", purpose: "any" },
       { src: "/logo-512.webp", sizes: "512x512", type: "image/webp", purpose: "maskable" },
     ],
+    // 공유 시트(다른 앱의 "공유")로 Loom에 바로 저장. GET이라 별도 SW 불필요.
+    // 공유 데이터는 /save?title=&text=&url= 로 전달된다.
+    // Next 타입이 웹 표준(params 객체형)과 어긋나 있어 표준 JSON을 내보내도록 캐스팅한다.
+    share_target: {
+      action: "/save",
+      method: "GET",
+      params: { title: "title", text: "text", url: "url" },
+    } as unknown as MetadataRoute.Manifest["share_target"],
   };
 }

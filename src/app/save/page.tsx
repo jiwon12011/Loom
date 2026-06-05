@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, Suspense } from "react";
 import { X, FileText, Image, Link2, Sparkles, Loader2, ImagePlus } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
 import { notifyAiComplete } from "@/lib/notifications";
@@ -13,14 +13,36 @@ const saveTypes = [
   { id: "link", icon: Link2, label: "링크", href: "/save/link" },
 ];
 
-export default function SavePage() {
+const isHttpUrl = (s: string) => /^https?:\/\/\S+$/i.test(s.trim());
+
+function SavePageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { show } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [content, setContent] = useState("");
   const [referenceImage, setReferenceImage] = useState<File | null>(null);
   const [referencePreview, setReferencePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // 공유 시트(Web Share Target)로 들어온 데이터 처리: URL이면 링크 저장으로, 아니면 텍스트 프리필
+  useEffect(() => {
+    const sharedUrl = searchParams.get("url");
+    const sharedText = searchParams.get("text") ?? "";
+    const sharedTitle = searchParams.get("title") ?? "";
+
+    const urlFromShare =
+      sharedUrl?.trim() || (isHttpUrl(sharedText) ? sharedText.trim() : "");
+
+    if (urlFromShare) {
+      router.replace(`/save/link?url=${encodeURIComponent(urlFromShare)}`);
+      return;
+    }
+
+    const prefill = [sharedTitle, sharedText].filter(Boolean).join("\n").trim();
+    if (prefill) setContent(prefill);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleReferenceImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -210,6 +232,14 @@ export default function SavePage() {
         </button>
       </section>
     </div>
+  );
+}
+
+export default function SavePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-surface" />}>
+      <SavePageInner />
+    </Suspense>
   );
 }
 

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { X, Link2, FileText, Image, Loader2, Sparkles } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
 import { notifyAiComplete } from "@/lib/notifications";
@@ -19,18 +19,26 @@ interface LinkPreview {
   image: string | null;
 }
 
-export default function SaveLinkPage() {
+function SaveLinkPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { show } = useToast();
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState(() => searchParams.get("url") ?? "");
   const [memo, setMemo] = useState("");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [preview, setPreview] = useState<LinkPreview | null>(null);
   const [fetchError, setFetchError] = useState("");
 
-  const handleFetch = async () => {
-    const trimmed = url.trim();
+  // 공유 시트로 URL이 넘어온 경우 자동으로 미리보기를 불러온다.
+  useEffect(() => {
+    const incoming = searchParams.get("url")?.trim();
+    if (incoming) handleFetch(incoming);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleFetch = async (override?: string) => {
+    const trimmed = (override ?? url).trim();
     if (!trimmed) return;
     setFetchError("");
 
@@ -166,7 +174,7 @@ export default function SaveLinkPage() {
             />
           </div>
           <button
-            onClick={handleFetch}
+            onClick={() => handleFetch()}
             disabled={loading || !url.trim()}
             className="px-4 btn-accent rounded-xl text-[14px] font-semibold flex-shrink-0 active:scale-[0.98] transition-transform disabled:opacity-50"
           >
@@ -246,5 +254,13 @@ export default function SaveLinkPage() {
         </button>
       </section>
     </div>
+  );
+}
+
+export default function SaveLinkPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-surface" />}>
+      <SaveLinkPageInner />
+    </Suspense>
   );
 }

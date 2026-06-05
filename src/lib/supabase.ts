@@ -1,9 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 
-// env 값에 섞인 줄바꿈/공백/따옴표를 제거한다. (대시보드에 붙여넣을 때 끝에 \n이 들어가면
-// fetch 헤더가 깨져 "Failed to execute 'fetch' on 'Window': Invalid value"가 난다)
+// env 값에 섞인 공백/줄바꿈/따옴표를 모두 제거한다. URL·JWT(anon 키)에는 공백이 존재할 수 없으므로
+// 안전하며, 대시보드 붙여넣기 때 키 "중간"에 낀 줄바꿈까지 제거해 원래 값으로 복원한다.
+// (헤더 값에 줄바꿈이 들어가면 "Failed to execute 'fetch' on 'Window': Invalid value"가 난다)
 const clean = (v: string | undefined) =>
-  v?.trim().replace(/^['"]|['"]$/g, "") || undefined;
+  v?.replace(/\s+/g, "").replace(/^['"]|['"]$/g, "") || undefined;
 
 const supabaseUrl = clean(process.env.NEXT_PUBLIC_SUPABASE_URL);
 const supabaseAnonKey = clean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);

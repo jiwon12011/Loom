@@ -161,23 +161,21 @@ export default function HomePage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-surface">
-      {/* 코너 메시 블롭 — 네 모서리에 핑크+피치를 아주 부드럽게(heavy blur, 저투명도). 가운데는 비워 가독성 유지 */}
+      {/* 도트 그리드 배경 — 은은한 점 텍스처(다크모드 자동 대응) + 우상단 옅은 피치 포인트 */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
-          className="absolute -top-16 -left-16 h-[230px] w-[230px] rounded-full blur-3xl transition-colors"
-          style={{ background: "radial-gradient(circle, var(--profile-accent) 0%, transparent 64%)", opacity: 0.16 }}
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "radial-gradient(circle, rgb(var(--text-primary) / 0.07) 1px, transparent 1.6px)",
+            backgroundSize: "22px 22px",
+            // 상단은 또렷, 아래로 갈수록 옅게 페이드 (콘텐츠 영역 깔끔하게)
+            maskImage: "linear-gradient(180deg, #000 0%, #000 38%, transparent 78%)",
+            WebkitMaskImage: "linear-gradient(180deg, #000 0%, #000 38%, transparent 78%)",
+          }}
         />
         <div
-          className="absolute -top-12 -right-20 h-[280px] w-[280px] rounded-full blur-3xl"
-          style={{ background: "radial-gradient(circle, rgb(var(--brand-peach)) 0%, transparent 64%)", opacity: 0.24 }}
-        />
-        <div
-          className="absolute -bottom-24 -left-20 h-[280px] w-[280px] rounded-full blur-3xl"
-          style={{ background: "radial-gradient(circle, rgb(var(--brand-peach)) 0%, transparent 64%)", opacity: 0.16 }}
-        />
-        <div
-          className="absolute -bottom-16 -right-16 h-[230px] w-[230px] rounded-full blur-3xl transition-colors"
-          style={{ background: "radial-gradient(circle, var(--profile-accent) 0%, transparent 64%)", opacity: 0.14 }}
+          className="absolute -top-12 -right-16 h-[220px] w-[220px] rounded-full blur-3xl"
+          style={{ background: "radial-gradient(circle, rgb(var(--brand-peach)) 0%, transparent 64%)", opacity: 0.2 }}
         />
       </div>
       <header className="relative z-10 px-5 pt-14 pb-3 flex items-center justify-between">

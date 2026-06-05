@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Bell, Search, Copy, ChevronRight, TrendingUp, X, FileText, Image as ImageIcon, Link2, Loader2 } from "lucide-react";
+import { Bell, Search, Copy, ChevronRight, TrendingUp, X, FileText, Image as ImageIcon, Link2, Loader2, Clock } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
@@ -10,6 +10,7 @@ import { PROFILE_ICON_STORAGE_KEY, getProfileIcon } from "@/lib/profile-icons";
 import { getUnreadCount } from "@/lib/notifications";
 import type { Item } from "@/lib/types";
 import { searchArchive, type SearchMode } from "@/lib/search";
+import { getMemory, type Memory } from "@/lib/memories";
 
 export default function HomePage() {
   const { show } = useToast();
@@ -21,6 +22,7 @@ export default function HomePage() {
   const [searchResults, setSearchResults] = useState<Item[]>([]);
   const [searchMode, setSearchMode] = useState<SearchMode | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [memory, setMemory] = useState<Memory | null>(null);
 
   useEffect(() => {
     setProfileIconId(localStorage.getItem(PROFILE_ICON_STORAGE_KEY));
@@ -45,6 +47,7 @@ export default function HomePage() {
       setLoading(false);
 
       getUnreadCount(user.id).then(setUnreadCount);
+      getMemory(user.id).then(setMemory);
     };
 
     fetchItems();
@@ -271,6 +274,31 @@ export default function HomePage() {
         </div>
       ) : (
         <>
+          {memory && (
+            <section className="relative z-10 px-5 mb-8">
+              <div
+                className="rounded-2xl border backdrop-blur-md p-4 shadow-elevated"
+                style={{
+                  background: "color-mix(in srgb, var(--profile-accent) 11%, transparent)",
+                  borderColor: "color-mix(in srgb, var(--profile-accent) 26%, transparent)",
+                }}
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full" style={{ background: "var(--profile-accent)", color: "var(--profile-on-accent)" }}>
+                    <Clock size={15} strokeWidth={2} />
+                  </span>
+                  <div>
+                    <p className="text-[14px] font-bold text-text-primary leading-tight">{memory.label}</p>
+                    <p className="text-[12px] text-text-secondary/80 leading-tight">그때 저장한 기억이에요</p>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  {memory.items.map((item) => <ItemCard key={item.id} item={item} variant="soft" />)}
+                </div>
+              </div>
+            </section>
+          )}
+
           <section className="relative z-10 px-5 mb-8">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-[17px] font-bold text-text-primary">최근 저장</h2>

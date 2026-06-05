@@ -12,6 +12,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getFolderByDescription } from "@/lib/folders";
 import type { Item, ItemImage } from "@/lib/types";
+import { invalidateItems } from "@/lib/hooks";
 
 export default function DetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -130,6 +131,9 @@ export default function DetailPage({ params }: { params: { id: string } }) {
   const handleDelete = async () => {
     setShowDeleteConfirm(false);
     await supabase.from("items").delete().eq("id", id);
+    // home/search의 items SWR 캐시도 무효화해 유령 카드가 남지 않게 한다.
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) await invalidateItems(user.id);
     show("삭제되었어요", "success");
     setTimeout(() => router.push("/"), 600);
   };

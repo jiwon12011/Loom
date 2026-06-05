@@ -11,12 +11,13 @@ import { getUnreadCount } from "@/lib/notifications";
 import type { Item } from "@/lib/types";
 import { searchArchive, type SearchMode } from "@/lib/search";
 import { getMemory, type Memory } from "@/lib/memories";
+import { useItems } from "@/lib/hooks";
 
 export default function HomePage() {
   const { show } = useToast();
   const [query, setQuery] = useState("");
-  const [allItems, setAllItems] = useState<Item[]>([]);
-  const [loading, setLoading] = useState(true);
+  // items는 SWR로 통일 (네비게이션 간 캐시 + 삭제 후 자동 갱신).
+  const { items: allItems, isLoading: loading } = useItems();
   const [profileIconId, setProfileIconId] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<Item[]>([]);
@@ -28,29 +29,15 @@ export default function HomePage() {
     setProfileIconId(localStorage.getItem(PROFILE_ICON_STORAGE_KEY));
   }, []);
 
+  // memory/unreadCount는 items SWR와 분리해 유저 확보 후 한 번 가져온다.
   useEffect(() => {
-    const fetchItems = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
-      const { data } = await supabase
-        .from("items")
-        .select("id, original_content, content_type, category, copy_count, created_at, summary, tags")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(200);
-
-      setAllItems(data ?? []);
-      setLoading(false);
-
-      getUnreadCount(user.id).then(setUnreadCount);
-      getMemory(user.id).then(setMemory);
-    };
-
-    fetchItems();
+    let cancelled = false;
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user || cancelled) return;
+      getUnreadCount(user.id).then((c) => { if (!cancelled) setUnreadCount(c); });
+      getMemory(user.id).then((m) => { if (!cancelled) setMemory(m); });
+    });
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {

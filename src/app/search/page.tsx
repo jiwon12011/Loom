@@ -3,12 +3,12 @@
 import { useState, useEffect, Suspense } from "react";
 import { ArrowLeft, Search, X, Copy, Loader2, Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
-import { supabase } from "@/lib/supabase";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Item } from "@/lib/types";
 import { searchArchive, type SearchMode } from "@/lib/search";
+import { useItems, deleteItems } from "@/lib/hooks";
 
 const FILTERS = [
   { id: "all", label: "전체" },
@@ -23,31 +23,14 @@ function SearchContent() {
   const { show } = useToast();
   const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
   const [activeFilter, setActiveFilter] = useState("all");
-  const [allItems, setAllItems] = useState<Item[]>([]);
-  const [loading, setLoading] = useState(true);
+  // items는 SWR로 통일 (home과 캐시 공유 + 삭제 후 자동 갱신).
+  const { items: allItems, isLoading: loading, mutate: mutateItems } = useItems();
   const [selectMode, setSelectMode] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [searching, setSearching] = useState(false);
   const [serverResults, setServerResults] = useState<Item[]>([]);
   const [searchMode, setSearchMode] = useState<SearchMode | null>(null);
-
-  useEffect(() => {
-    fetchAll();
-  }, []);
-
-  const fetchAll = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { router.replace("/login"); return; }
-    const { data } = await supabase
-      .from("items")
-      .select("id, original_content, content_type, category, copy_count, created_at, summary, tags")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(200);
-    setAllItems(data ?? []);
-    setLoading(false);
-  };
 
   useEffect(() => {
     const trimmed = query.trim();
@@ -94,11 +77,15 @@ function SearchContent() {
   const handleDeleteSelected = async () => {
     setShowDeleteConfirm(false);
     const ids = Array.from(selected);
-    await supabase.from("items").delete().in("id", ids);
-    setAllItems(prev => prev.filter(i => !selected.has(i.id)));
     setSelected(new Set());
     setSelectMode(false);
-    show(`${ids.length}개 삭제되었어요`, "success");
+    // SWR 낙관적 삭제: 캐시에서 즉시 제거 후 DB delete, 실패 시 자동 롤백.
+    try {
+      await deleteItems(ids, mutateItems);
+      show(`${ids.length}개 삭제되었어요`, "success");
+    } catch {
+      show("삭제에 실패했어요", "error");
+    }
   };
 
   const handleCopy = async (e: React.MouseEvent, item: typeof allItems[0]) => {

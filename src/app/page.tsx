@@ -161,16 +161,23 @@ export default function HomePage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-surface">
+      {/* 코너 메시 블롭 — 네 모서리에 핑크+피치를 아주 부드럽게(heavy blur, 저투명도). 가운데는 비워 가독성 유지 */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        {/* 상단 한정 소프트 워시 — 화면 절반을 덮지 않고 위에서 부드럽게 페이드 (Notion/Linear 헤더 무드) */}
         <div
-          className="absolute inset-x-0 top-0 h-[300px] transition-colors"
-          style={{ background: "linear-gradient(180deg, color-mix(in srgb, var(--profile-accent) 12%, transparent), transparent)" }}
+          className="absolute -top-16 -left-16 h-[230px] w-[230px] rounded-full blur-3xl transition-colors"
+          style={{ background: "radial-gradient(circle, var(--profile-accent) 0%, transparent 64%)", opacity: 0.16 }}
         />
-        {/* 우상단 따뜻한 포인트 (피치 톤, 아주 옅게) — 모노톤 핑크 단조로움 보완 */}
         <div
-          className="absolute -top-12 right-[-70px] h-[260px] w-[260px] rounded-full blur-3xl"
-          style={{ background: "radial-gradient(circle, rgb(var(--brand-peach)) 0%, transparent 65%)", opacity: 0.22 }}
+          className="absolute -top-12 -right-20 h-[280px] w-[280px] rounded-full blur-3xl"
+          style={{ background: "radial-gradient(circle, rgb(var(--brand-peach)) 0%, transparent 64%)", opacity: 0.24 }}
+        />
+        <div
+          className="absolute -bottom-24 -left-20 h-[280px] w-[280px] rounded-full blur-3xl"
+          style={{ background: "radial-gradient(circle, rgb(var(--brand-peach)) 0%, transparent 64%)", opacity: 0.16 }}
+        />
+        <div
+          className="absolute -bottom-16 -right-16 h-[230px] w-[230px] rounded-full blur-3xl transition-colors"
+          style={{ background: "radial-gradient(circle, var(--profile-accent) 0%, transparent 64%)", opacity: 0.14 }}
         />
       </div>
       <header className="relative z-10 px-5 pt-14 pb-3 flex items-center justify-between">

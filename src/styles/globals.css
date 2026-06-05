@@ -33,6 +33,12 @@
   --profile-soft: #8d69cd;
   --profile-glow: rgba(141, 105, 205, 0.3);
   --profile-on-accent: #ffffff;
+
+  /* 타이밍/이징 토큰 */
+  --dur-enter: 220ms;
+  --ease-enter: cubic-bezier(0.2, 0, 0, 1);
+  --dur-press: 110ms;
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .dark {
@@ -139,6 +145,92 @@ body {
 
 .animate-slide-up {
   animation: slide-up 0.3s ease-out;
+}
+
+/* fade-up: 검색 결과 stagger 등장용 */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stagger-item {
+  animation: fade-up var(--dur-enter) var(--ease-enter) both;
+}
+
+/* slide-out: Toast 퇴장 */
+@keyframes slide-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.animate-slide-out {
+  animation: slide-out 0.2s var(--ease-enter) forwards;
+}
+
+/* slide-down: BottomSheet 닫힘 */
+@keyframes slide-down {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+.animate-slide-down {
+  animation: slide-down 0.25s var(--ease-enter) forwards;
+}
+
+/* 터치 기기 ghost hover 제거: 포인터가 없는 환경(모바일)에서 hover 잔상 방지 */
+@media (hover: none) {
+  .card-hover:hover {
+    transform: none !important;
+    box-shadow: var(--tw-shadow) !important;
+  }
+}
+
+/* TabBar 활성 dot */
+@keyframes dot-pop {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.tab-dot-active {
+  animation: dot-pop var(--dur-press) var(--ease-spring) both;
+}
+
+/* CopyButton 아이콘 모핑 */
+@keyframes icon-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6) rotate(-15deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.icon-morph {
+  animation: icon-in 0.18s var(--ease-spring) both;
 }
 
 /* 모션 최소화 선호 시 모든 애니메이션/전환을 거의 즉시로 단축 (상태 변화 자체는 유지) */

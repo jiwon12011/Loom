@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { ArrowLeft, Search, X, Copy, Loader2, Trash2 } from "lucide-react";
+import { ArrowLeft, Search, X, Loader2, Trash2 } from "lucide-react";
+import CopyButton from "@/components/ui/CopyButton";
 import { useToast } from "@/components/ui/Toast";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import Link from "next/link";
@@ -191,7 +192,8 @@ function SearchContent() {
             </div>
           ) : (
             <div className="px-5 space-y-3 pb-6">
-              {filtered.map((item) => {
+              {/* key에 query + activeFilter 포함 → 검색어/필터 변경 시 stagger 재트리거 */}
+              {filtered.map((item, i) => {
                 const isSelected = selected.has(item.id);
                 return selectMode ? (
                   <button
@@ -221,27 +223,32 @@ function SearchContent() {
                     </div>
                   </button>
                 ) : (
-                  <Link key={item.id} href={`/detail/${item.id}`} className="block">
-                    <div className="bg-surface border border-border rounded-2xl px-4 py-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated active:translate-y-0 active:scale-[0.98]">
-                      <div className="flex gap-3">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[15px] text-text-primary font-medium leading-[1.6] line-clamp-3">
-                          {item.content_type === "image" ? (item.summary ?? "이미지") : item.original_content}
-                        </p>
-                          <div className="flex items-center gap-2 mt-2.5">
-                            {item.category && (
-                              <span className="text-[11px] font-semibold text-brand-purple bg-surface-section px-2 py-0.5 rounded">{item.category}</span>
-                            )}
-                            <span className="text-[11px] text-text-muted">{getTypeLabel(item.content_type)}</span>
-                            <span className="text-[11px] text-text-muted">{formatDate(item.created_at)}</span>
+                  <div
+                    key={`${query}-${activeFilter}-${item.id}`}
+                    className="stagger-item"
+                    style={{ animationDelay: `${i * 25}ms` }}
+                  >
+                    <Link href={`/detail/${item.id}`} className="block">
+                      {/* card-hover: 터치 기기 ghost hover 방지, transition 한정으로 합성 레이어만 */}
+                      <div className="card-hover bg-surface border border-border rounded-2xl px-4 py-5 shadow-card transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:shadow-elevated active:translate-y-0 active:scale-[0.98]">
+                        <div className="flex gap-3">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[15px] text-text-primary font-medium leading-[1.6] line-clamp-3">
+                              {item.content_type === "image" ? (item.summary ?? "이미지") : item.original_content}
+                            </p>
+                            <div className="flex items-center gap-2 mt-2.5">
+                              {item.category && (
+                                <span className="text-[11px] font-semibold text-brand-purple bg-surface-section px-2 py-0.5 rounded">{item.category}</span>
+                              )}
+                              <span className="text-[11px] text-text-muted">{getTypeLabel(item.content_type)}</span>
+                              <span className="text-[11px] text-text-muted">{formatDate(item.created_at)}</span>
+                            </div>
                           </div>
+                          <CopyButton onCopy={(e) => handleCopy(e, item)} />
                         </div>
-                        <button aria-label="복사" className="p-2.5 self-start flex-shrink-0 transition-opacity hover:opacity-60" onClick={(e) => handleCopy(e, item)} style={{ color: "var(--profile-accent)" }}>
-                          <Copy size={16} strokeWidth={1.8} />
-                        </button>
                       </div>
-                    </div>
-                  </Link>
+                    </Link>
+                  </div>
                 );
               })}
             </div>

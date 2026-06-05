@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Bell, Search, Copy, ChevronRight, TrendingUp, X, FileText, Image as ImageIcon, Link2, Loader2, Clock } from "lucide-react";
+import { Bell, Search, ChevronRight, TrendingUp, X, FileText, Image as ImageIcon, Link2, Loader2, Clock } from "lucide-react";
+import CopyButton from "@/components/ui/CopyButton";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
@@ -123,7 +124,9 @@ export default function HomePage() {
 
   const ItemCard = ({ item, variant = "default" }: { item: Item; variant?: "default" | "soft" }) => (
     <Link href={`/detail/${item.id}`} className="block">
-      <div className={`${variant === "soft" ? "bg-surface-soft border-border-light hover:border-brand-purple/30" : "bg-surface border-border hover:border-brand-purple/35"} border rounded-2xl px-4 py-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-elevated active:translate-y-0 active:scale-[0.98]`}>
+      {/* card-hover: 터치 기기에서 ghost hover 잔상 차단 (globals.css @media hover:none) */}
+      {/* transition 한정: transform/box-shadow/border-color만 합성 레이어에서 처리, layout 유발 속성 제외 */}
+      <div className={`card-hover ${variant === "soft" ? "bg-surface-soft border-border-light hover:border-brand-purple/30" : "bg-surface border-border hover:border-brand-purple/35"} border rounded-2xl px-4 py-5 shadow-card transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:shadow-elevated active:translate-y-0 active:scale-[0.98]`}>
         <div className="flex gap-3.5">
           {item.content_type === "image" && canPreviewImage(item.original_content) ? (
             <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-surface-section border border-border-light">
@@ -150,9 +153,7 @@ export default function HomePage() {
               <span className="text-[12px] text-text-secondary/70">{getTypeLabel(item.content_type)}</span>
             </div>
           </div>
-          <button aria-label="복사" className="p-2.5 flex-shrink-0 self-start transition-opacity hover:opacity-60" onClick={(e) => handleCopy(e, item)} style={{ color: "var(--profile-accent)" }}>
-            <Copy size={16} strokeWidth={1.8} />
-          </button>
+          <CopyButton onCopy={(e) => handleCopy(e, item)} />
         </div>
       </div>
     </Link>
@@ -238,7 +239,12 @@ export default function HomePage() {
             </div>
           ) : searchResults.length > 0 ? (
             <div className="space-y-3">
-              {searchResults.map((item) => <ItemCard key={item.id} item={item} />)}
+              {/* key에 query 포함 → 쿼리 변경 시 stagger 재트리거 */}
+              {searchResults.map((item, i) => (
+                <div key={`${query}-${item.id}`} className="stagger-item" style={{ animationDelay: `${i * 25}ms` }}>
+                  <ItemCard item={item} />
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-center py-12">

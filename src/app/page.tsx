@@ -166,7 +166,8 @@ export default function HomePage() {
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: "radial-gradient(circle, rgb(var(--text-primary) / 0.07) 1px, transparent 1.6px)",
+            // 점 색을 프로필 액센트 기반으로 (테마 바뀌면 점도 따라 변함)
+            backgroundImage: "radial-gradient(circle, color-mix(in srgb, var(--profile-accent) 22%, transparent) 1px, transparent 1.6px)",
             backgroundSize: "22px 22px",
             // 상단은 또렷, 아래로 갈수록 옅게 페이드 (콘텐츠 영역 깔끔하게)
             maskImage: "linear-gradient(180deg, #000 0%, #000 38%, transparent 78%)",

@@ -121,7 +121,7 @@ function SearchContent() {
   return (
     <div className="min-h-screen bg-surface pb-24">
       <header className="px-5 pt-14 pb-3 flex items-center gap-2">
-        <button aria-label="뒤로 가기" onClick={() => { router.back(); }} className="p-2.5 -ml-1 text-text-primary">
+        <button aria-label="뒤로 가기" onClick={() => { router.back(); }} className="p-2.5 -ml-1 text-text-primary focus-ring rounded-lg">
           <ArrowLeft size={22} strokeWidth={1.5} />
         </button>
         <div className="flex-1 flex items-center gap-2 bg-surface-soft border border-border rounded-xl px-3.5 py-2.5">

@@ -144,9 +144,9 @@ export default function HomePage() {
             <p className="text-[15px] text-text-primary font-semibold leading-[1.55] line-clamp-2">
               {getDisplayText(item)}
             </p>
-            <div className="flex items-center gap-2.5 mt-3">
+            <div className="flex items-center gap-2.5 mt-2.5">
               {item.category && (
-                <span className="text-[11px] font-semibold text-brand-purple bg-surface px-2 py-0.5 rounded">{item.category}</span>
+                <span className="text-[11px] font-semibold text-brand-purple bg-surface-section px-2 py-0.5 rounded">{item.category}</span>
               )}
               <span className="text-[12px] text-text-secondary/70">{formatDate(item.created_at)}</span>
               <span className="text-[12px] text-text-secondary/45 px-0.5">·</span>
@@ -181,7 +181,7 @@ export default function HomePage() {
           <span className="text-[20px] font-semibold text-text-primary tracking-tight">Loom</span>
         </div>
         <div className="ml-auto flex items-center gap-3">
-          <Link href="/notifications" className="p-2 text-text-muted relative">
+          <Link href="/notifications" className="p-2 text-text-muted relative focus-ring rounded-lg">
             <Bell size={22} strokeWidth={1.5} />
             {unreadCount > 0 && (
               <span className="absolute top-1 right-1 min-w-[16px] h-4 flex items-center justify-center bg-brand-purple text-white text-[10px] font-bold rounded-full px-1">
@@ -189,7 +189,7 @@ export default function HomePage() {
               </span>
             )}
           </Link>
-          <Link href="/settings/account">
+          <Link href="/settings/account" className="focus-ring rounded-full">
             <div className="relative w-8 h-8 rounded-full bg-surface-section overflow-hidden flex items-center justify-center">
               <Image src={profileIcon.image} alt="" fill sizes="32px" className="object-cover scale-[1.08] translate-y-[1px]" />
             </div>
@@ -204,7 +204,7 @@ export default function HomePage() {
 
       <section className="relative z-10 px-5 mb-7">
         <div
-          className="flex min-h-[64px] items-center gap-3.5 bg-surface-section rounded-2xl px-5 py-4 shadow-elevated transition-all focus-within:shadow-[0_8px_24px_var(--profile-glow)]"
+          className="flex min-h-[64px] items-center gap-3.5 bg-surface/60 backdrop-blur-md rounded-2xl px-5 py-4 shadow-elevated transition-all focus-within:shadow-[0_8px_24px_var(--profile-glow)]"
           style={{ border: "1.5px solid var(--profile-accent)" }}
         >
           <Search size={21} className="flex-shrink-0 transition-colors" strokeWidth={1.8} style={{ color: "var(--profile-accent)" }} />
@@ -216,7 +216,7 @@ export default function HomePage() {
             className="flex-1 bg-transparent text-[15px] text-text-primary placeholder:text-text-muted outline-none"
           />
           {query && (
-            <button aria-label="검색어 지우기" onClick={() => setQuery("")} className="text-text-muted flex-shrink-0">
+            <button aria-label="검색어 지우기" onClick={() => setQuery("")} className="text-text-muted flex-shrink-0 focus-ring rounded">
               <X size={16} />
             </button>
           )}

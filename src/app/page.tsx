@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Bell, Search, Copy, ChevronRight, TrendingUp, X, FileText, Image as ImageIcon, Link2, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
@@ -9,6 +9,7 @@ import Image from "next/image";
 import { PROFILE_ICON_STORAGE_KEY, getProfileIcon } from "@/lib/profile-icons";
 import { getUnreadCount } from "@/lib/notifications";
 import type { Item } from "@/lib/types";
+import { searchArchive, type SearchMode } from "@/lib/search";
 
 export default function HomePage() {
   const { show } = useToast();
@@ -17,8 +18,8 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [profileIconId, setProfileIconId] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
-  const [aiResultIds, setAiResultIds] = useState<string[]>([]);
-  const [searchMode, setSearchMode] = useState<"ai" | "local" | null>(null);
+  const [searchResults, setSearchResults] = useState<Item[]>([]);
+  const [searchMode, setSearchMode] = useState<SearchMode | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
@@ -52,57 +53,35 @@ export default function HomePage() {
   useEffect(() => {
     const trimmed = query.trim();
     if (!trimmed) {
-      setAiResultIds([]);
+      setSearchResults([]);
       setSearchMode(null);
       setSearching(false);
       return;
     }
 
+    let cancelled = false;
     const timer = window.setTimeout(async () => {
       setSearching(true);
-      try {
-        const res = await fetch("/api/search", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query: trimmed,
-            items: allItems.map(({ id, original_content, content_type, category, summary }) => ({
-              id, original_content, content_type, category, summary,
-            })),
-          }),
-        });
-        const json = await res.json();
-        setAiResultIds(Array.isArray(json.ids) ? json.ids : []);
-        setSearchMode(json.mode === "ai" ? "ai" : "local");
-      } catch {
-        setAiResultIds([]);
-        setSearchMode("local");
-      } finally {
-        setSearching(false);
-      }
+      const { items, mode } = await searchArchive(trimmed, allItems);
+      if (cancelled) return;
+      setSearchResults(items);
+      setSearchMode(mode);
+      setSearching(false);
     }, 350);
 
-    return () => window.clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
   }, [query, allItems]);
 
   const profileIcon = getProfileIcon(profileIconId);
 
-  const recentItems = allItems.slice(0, 3);
-  const frequentItems = [...allItems].sort((a, b) => b.copy_count - a.copy_count).slice(0, 3);
-
-  const locallyFiltered = allItems.filter(i =>
-    i.original_content.toLowerCase().includes(query.toLowerCase()) ||
-    i.category?.toLowerCase().includes(query.toLowerCase()) ||
-    i.summary?.toLowerCase().includes(query.toLowerCase())
+  const recentItems = useMemo(() => allItems.slice(0, 3), [allItems]);
+  const frequentItems = useMemo(
+    () => [...allItems].sort((a, b) => b.copy_count - a.copy_count).slice(0, 3),
+    [allItems]
   );
-
-  const aiRanked = aiResultIds
-    .map((id) => allItems.find((item) => item.id === id))
-    .filter((item): item is Item => Boolean(item));
-
-  const searchResults = query.trim()
-    ? (aiResultIds.length > 0 ? aiRanked : locallyFiltered)
-    : [];
 
   const handleCopy = async (e: React.MouseEvent, item: Item) => {
     e.preventDefault();
@@ -259,7 +238,7 @@ export default function HomePage() {
             <p className="text-[13px] text-text-muted">검색 결과 {searching ? "..." : `${searchResults.length}개`}</p>
             {query.trim() && (
               <span className="text-[12px] font-semibold text-brand-purple">
-                {searching ? "AI 검색 중..." : searchMode === "ai" ? "AI 검색" : "기본 검색"}
+                {searching ? "AI 검색 중..." : searchMode === "ai" ? "AI 검색" : searchMode === "server" ? "전체 검색" : "기본 검색"}
               </span>
             )}
           </div>

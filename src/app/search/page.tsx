@@ -8,6 +8,7 @@ import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Item } from "@/lib/types";
+import { searchArchive, type SearchMode } from "@/lib/search";
 
 const FILTERS = [
   { id: "all", label: "전체" },
@@ -28,8 +29,8 @@ function SearchContent() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [searching, setSearching] = useState(false);
-  const [aiResultIds, setAiResultIds] = useState<string[]>([]);
-  const [searchMode, setSearchMode] = useState<"ai" | "local" | null>(null);
+  const [serverResults, setServerResults] = useState<Item[]>([]);
+  const [searchMode, setSearchMode] = useState<SearchMode | null>(null);
 
   useEffect(() => {
     fetchAll();
@@ -51,57 +52,29 @@ function SearchContent() {
   useEffect(() => {
     const trimmed = query.trim();
     if (!trimmed) {
-      setAiResultIds([]);
+      setServerResults([]);
       setSearchMode(null);
       setSearching(false);
       return;
     }
 
+    let cancelled = false;
     const timer = window.setTimeout(async () => {
       setSearching(true);
-      try {
-        const res = await fetch("/api/search", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query: trimmed,
-            items: allItems.map(({ id, original_content, content_type, category, summary }) => ({
-              id,
-              original_content,
-              content_type,
-              category,
-              summary,
-            })),
-          }),
-        });
-        const json = await res.json();
-        setAiResultIds(Array.isArray(json.ids) ? json.ids : []);
-        setSearchMode(json.mode === "ai" ? "ai" : "local");
-      } catch {
-        setAiResultIds([]);
-        setSearchMode("local");
-      } finally {
-        setSearching(false);
-      }
+      const { items, mode } = await searchArchive(trimmed, allItems);
+      if (cancelled) return;
+      setServerResults(items);
+      setSearchMode(mode);
+      setSearching(false);
     }, 350);
 
-    return () => window.clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
   }, [query, allItems]);
 
-  const locallyFiltered = allItems.filter(i => !query.trim() ||
-    i.original_content.toLowerCase().includes(query.toLowerCase()) ||
-    i.category?.toLowerCase().includes(query.toLowerCase()) ||
-    i.summary?.toLowerCase().includes(query.toLowerCase()));
-
-  const aiRanked = query.trim()
-    ? aiResultIds
-        .map((id) => allItems.find((item) => item.id === id))
-        .filter((item): item is Item => Boolean(item))
-    : allItems;
-
-  const baseResults = query.trim()
-    ? (aiResultIds.length > 0 ? aiRanked : locallyFiltered)
-    : allItems;
+  const baseResults = query.trim() ? serverResults : allItems;
 
   const filtered = baseResults.filter(i =>
     activeFilter === "all" ||
@@ -218,7 +191,7 @@ function SearchContent() {
               </h3>
               {query.trim() && (
                 <span className="text-[12px] font-semibold text-brand-purple">
-                  {searching ? "AI 검색 중..." : searchMode === "ai" ? "AI 검색" : "기본 검색"}
+                  {searching ? "AI 검색 중..." : searchMode === "ai" ? "AI 검색" : searchMode === "server" ? "전체 검색" : "기본 검색"}
                 </span>
               )}
             </div>

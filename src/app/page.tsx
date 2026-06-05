@@ -162,17 +162,14 @@ export default function HomePage() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-surface">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        {/* 상단 앰비언트 글로우 — 부드럽게 번지게 (blur + 완만한 falloff로 '딱딱한 원'이 아니라 빛 번짐) */}
         <div
-          className="absolute -left-44 -top-52 h-[560px] w-[560px] rounded-full transition-colors"
-          style={{ background: "radial-gradient(closest-side, var(--profile-accent) 0%, transparent 72%)", opacity: 0.16 }}
+          className="absolute -left-40 -top-48 h-[640px] w-[640px] rounded-full blur-3xl transition-colors"
+          style={{ background: "radial-gradient(circle, var(--profile-accent) 0%, transparent 62%)", opacity: 0.20 }}
         />
         <div
-          className="absolute -left-24 -top-28 h-[320px] w-[320px] rounded-full transition-colors"
-          style={{ background: "radial-gradient(closest-side, var(--profile-accent) 0%, transparent 70%)", opacity: 0.14 }}
-        />
-        <div
-          className="absolute -left-16 top-24 h-[260px] w-[260px] rounded-full blur-2xl transition-colors"
-          style={{ background: "radial-gradient(closest-side, var(--profile-accent) 0%, transparent 75%)", opacity: 0.08 }}
+          className="absolute left-1/3 -top-36 h-[440px] w-[440px] rounded-full blur-3xl transition-colors"
+          style={{ background: "radial-gradient(circle, var(--profile-accent) 0%, transparent 66%)", opacity: 0.10 }}
         />
       </div>
       <header className="relative z-10 px-5 pt-14 pb-3 flex items-center justify-between">

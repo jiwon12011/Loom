@@ -7,16 +7,7 @@ import { supabase } from "@/lib/supabase";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-
-type Item = {
-  id: string;
-  original_content: string;
-  content_type: string;
-  category: string | null;
-  copy_count: number;
-  created_at: string;
-  summary: string | null;
-};
+import type { Item } from "@/lib/types";
 
 const FILTERS = [
   { id: "all", label: "전체" },
@@ -49,7 +40,7 @@ function SearchContent() {
     if (!user) { router.replace("/login"); return; }
     const { data } = await supabase
       .from("items")
-      .select("id, original_content, content_type, category, copy_count, created_at, summary")
+      .select("id, original_content, content_type, category, copy_count, created_at, summary, tags")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(200);

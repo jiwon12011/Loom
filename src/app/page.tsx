@@ -8,16 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { PROFILE_ICON_STORAGE_KEY, getProfileIcon } from "@/lib/profile-icons";
 import { getUnreadCount } from "@/lib/notifications";
-
-type Item = {
-  id: string;
-  original_content: string;
-  content_type: string;
-  category: string | null;
-  copy_count: number;
-  created_at: string;
-  summary: string | null;
-};
+import type { Item } from "@/lib/types";
 
 export default function HomePage() {
   const { show } = useToast();
@@ -37,11 +28,14 @@ export default function HomePage() {
   useEffect(() => {
     const fetchItems = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
       const { data } = await supabase
         .from("items")
-        .select("id, original_content, content_type, category, copy_count, created_at, summary")
+        .select("id, original_content, content_type, category, copy_count, created_at, summary, tags")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(200);
@@ -128,7 +122,8 @@ export default function HomePage() {
       const lines = item.original_content.split("\n");
       return lines[1] || lines[0];
     }
-    return item.original_content;
+    // AI 요약이 있으면 긴 원문 대신 한 줄 요약을 카드 제목으로 (가독성)
+    return item.summary ?? item.original_content;
   };
 
   const formatDate = (dateStr: string) => {
@@ -212,7 +207,7 @@ export default function HomePage() {
       </div>
       <header className="relative z-10 px-5 pt-14 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Image src="/logo.png" alt="Loom" width={32} height={32} className="object-contain" />
+          <Image src="/logo-192.webp" alt="Loom" width={32} height={32} className="object-contain" />
           <span className="text-[20px] font-semibold text-text-primary tracking-tight">Loom</span>
         </div>
         <div className="ml-auto flex items-center gap-3">

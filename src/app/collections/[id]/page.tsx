@@ -10,17 +10,10 @@ import EmptyState from "@/components/ui/EmptyState";
 import BottomSheet from "@/components/ui/BottomSheet";
 import Link from "next/link";
 
-type Item = {
-  id: string;
-  original_content: string;
-  content_type: string;
-  category: string | null;
-  created_at: string;
-  collection_item_id: string;
-  summary: string | null;
-};
+import type { Item as BaseItem } from "@/lib/types";
 
-type SavedItem = Omit<Item, "collection_item_id">;
+type Item = BaseItem & { collection_item_id: string };
+type SavedItem = BaseItem;
 
 type Collection = {
   id: string;
@@ -81,7 +74,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
     }
     const { data } = await supabase
       .from("items")
-      .select("id, original_content, content_type, category, created_at, summary")
+      .select("id, original_content, content_type, category, created_at, summary, copy_count, tags")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
     const existingIds = new Set(items.map((item) => item.id));

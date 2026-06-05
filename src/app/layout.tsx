@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "Loom - AI 개인 아카이브",
   description: "저장하고, AI가 정리하고, 자연어로 찾는다",
   applicationName: "Loom",
-  icons: { icon: "/logo.png", apple: "/logo.png" },
+  icons: { icon: "/logo-192.webp", apple: "/logo-192.webp" },
   appleWebApp: { capable: true, title: "Loom", statusBarStyle: "default" },
   openGraph: {
     title: "Loom - AI 개인 아카이브",
@@ -44,6 +44,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
+      <head>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        />
+      </head>
       <body className="bg-surface md:bg-surface-soft">
         <ToastProvider>
           <ThemeSync />

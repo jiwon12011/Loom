@@ -1,6 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 
-export const supabase = createClient(
-  "https://rjavqpzenkxirwxbpory.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqYXZxcHplbmt4aXJ3eGJwb3J5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3OTYzOTUsImV4cCI6MjA5NTM3MjM5NX0.gRVlwi2ealHEkQyyaEgy5H34RVlt1rfN1BsyWnrvZZY"
-);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "Supabase 환경변수가 없습니다. .env.local에 NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY를 설정하세요 (.env.example 참고)."
+  );
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);

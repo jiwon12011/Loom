@@ -40,22 +40,18 @@ export default function CollectionsPage() {
 
   const fetchCollections = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    // item_count는 collection_items 트리거로 비정규화 유지되므로 그대로 신뢰한다(N+1 count 제거).
     const { data } = await supabase
       .from("collections")
       .select("id, name, description, item_count")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
-    const collectionsWithCounts = await Promise.all((data ?? []).map(async (collection) => {
-      const { count } = await supabase
-        .from("collection_items")
-        .select("id", { count: "exact", head: true })
-        .eq("collection_id", collection.id);
-      return { ...collection, item_count: count ?? collection.item_count ?? 0 };
-    }));
-
-    setCollections(collectionsWithCounts);
+    setCollections((data ?? []).map((c) => ({ ...c, item_count: c.item_count ?? 0 })));
     setLoading(false);
   };
 

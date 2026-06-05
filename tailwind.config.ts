@@ -32,6 +32,16 @@ const config: Config = {
           light: rgb("border-light"),
         },
       },
+      fontSize: {
+        // 타이포 스케일 (행간 기본 동봉) — 점진 적용용 토큰
+        caption: ["12px", { lineHeight: "1.5" }],
+        footnote: ["13px", { lineHeight: "1.5" }],
+        body: ["15px", { lineHeight: "1.6" }],
+        callout: ["17px", { lineHeight: "1.5", fontWeight: "600" }],
+        title3: ["20px", { lineHeight: "1.3", letterSpacing: "-0.01em" }],
+        title1: ["28px", { lineHeight: "1.2", letterSpacing: "-0.02em" }],
+        display: ["35px", { lineHeight: "1.12", letterSpacing: "-0.02em" }],
+      },
       fontFamily: {
         pretendard: [
           "Pretendard",
@@ -48,7 +58,8 @@ const config: Config = {
       boxShadow: {
         card: "0 1px 4px rgba(45, 42, 51, 0.04)",
         elevated: "0 4px 16px rgba(45, 42, 51, 0.06)",
-        modal: "0 -4px 24px rgba(45, 42, 51, 0.08)",
+        floating: "0 8px 28px rgba(45, 42, 51, 0.12)",
+        modal: "0 -8px 32px rgba(45, 42, 51, 0.12)",
       },
     },
   },

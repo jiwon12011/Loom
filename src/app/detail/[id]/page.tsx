@@ -11,23 +11,7 @@ import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import Link from "next/link";
 import Image from "next/image";
 import { getFolderByDescription } from "@/lib/folders";
-
-type Item = {
-  id: string;
-  original_content: string;
-  content_type: string;
-  category: string | null;
-  tags: string[];
-  copy_count: number;
-  created_at: string;
-  summary: string | null;
-};
-
-type ItemImage = {
-  id: string;
-  image_url: string;
-  display_order: number;
-};
+import type { Item, ItemImage } from "@/lib/types";
 
 export default function DetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -42,11 +26,17 @@ export default function DetailPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     const fetchItem = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.replace("/login");
+        return;
+      }
       const [{ data, error }, { data: images }] = await Promise.all([
         supabase
           .from("items")
           .select("id, original_content, content_type, category, tags, copy_count, created_at, summary")
           .eq("id", id)
+          .eq("user_id", user.id)
           .single(),
         supabase
           .from("item_images")

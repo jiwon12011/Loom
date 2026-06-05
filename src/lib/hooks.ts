@@ -11,7 +11,8 @@ const ITEMS_SELECT =
 
 // 모든 훅이 공유하는 SWR 옵션. (SWRConfig Provider 없이 동일 효과)
 const SWR_OPTIONS = {
-  revalidateOnFocus: true,
+  // 저장/삭제는 mutate로 즉시 갱신하므로, 모바일 포커스 전환마다 재쿼리하지 않는다(데이터·배터리 절약).
+  revalidateOnFocus: false,
   dedupingInterval: 5000,
 } as const;
 

@@ -204,7 +204,7 @@ export default function HomePage() {
 
       <section className="relative z-10 px-5 mb-7">
         <div
-          className="flex min-h-[64px] items-center gap-3.5 bg-surface/60 backdrop-blur-md rounded-2xl px-5 py-4 shadow-elevated transition-all focus-within:shadow-[0_8px_24px_var(--profile-glow)]"
+          className="flex min-h-[64px] items-center gap-3.5 bg-surface/60 backdrop-blur-md rounded-2xl px-5 py-4 shadow-elevated transition-[box-shadow] focus-within:shadow-[0_8px_24px_var(--profile-glow)]"
           style={{ border: "1.5px solid var(--profile-accent)" }}
         >
           <Search size={21} className="flex-shrink-0 transition-colors" strokeWidth={1.8} style={{ color: "var(--profile-accent)" }} />
@@ -241,7 +241,7 @@ export default function HomePage() {
             <div className="space-y-3">
               {/* key에 query 포함 → 쿼리 변경 시 stagger 재트리거 */}
               {searchResults.map((item, i) => (
-                <div key={`${query}-${item.id}`} className="stagger-item" style={{ animationDelay: `${i * 25}ms` }}>
+                <div key={`${query}-${item.id}`} className="stagger-item" style={{ animationDelay: `${Math.min(i, 9) * 25}ms` }}>
                   <ItemCard item={item} />
                 </div>
               ))}

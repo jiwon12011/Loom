@@ -226,7 +226,7 @@ function SearchContent() {
                   <div
                     key={`${query}-${activeFilter}-${item.id}`}
                     className="stagger-item"
-                    style={{ animationDelay: `${i * 25}ms` }}
+                    style={{ animationDelay: `${Math.min(i, 9) * 25}ms` }}
                   >
                     <Link href={`/detail/${item.id}`} className="block">
                       {/* card-hover: 터치 기기 ghost hover 방지, transition 한정으로 합성 레이어만 */}

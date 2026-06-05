@@ -7,17 +7,32 @@
 --  - original_content/summary/category/tags 를 합친 search_text 생성컬럼에 GIN 트라이그램 인덱스.
 --  - search_items() RPC는 SECURITY INVOKER(기본)라 items의 RLS(user_id = auth.uid())가 그대로 적용된다.
 
--- 1) 트라이그램 확장
-create extension if not exists pg_trgm;
+-- 1) 트라이그램 확장 (Supabase는 extensions 스키마에 설치한다)
+create extension if not exists pg_trgm with schema extensions;
+
+-- 이 배치 동안 트라이그램 연산자/오퍼레이터클래스(gin_trgm_ops, %, similarity)를
+-- 찾을 수 있도록 검색경로에 extensions 포함.
+set search_path = public, extensions;
 
 -- 2) 검색 대상 텍스트를 합친 생성 컬럼
+--    생성컬럼은 IMMUTABLE 표현식만 허용한다. array_to_string가 immutable 검사에 걸리므로
+--    표현식을 immutable 함수로 감싼다(이 에러의 표준 우회법).
+create or replace function items_search_text(
+  p_content text, p_summary text, p_category text, p_tags text[]
+) returns text
+language sql
+immutable
+as $$
+  select coalesce(p_content, '')  || ' ' ||
+         coalesce(p_summary, '')   || ' ' ||
+         coalesce(p_category, '')  || ' ' ||
+         coalesce(array_to_string(p_tags, ' '), '');
+$$;
+
 alter table items
   add column if not exists search_text text
   generated always as (
-    coalesce(original_content, '') || ' ' ||
-    coalesce(summary, '')          || ' ' ||
-    coalesce(category, '')         || ' ' ||
-    coalesce(array_to_string(tags, ' '), '')
+    items_search_text(original_content, summary, category, tags)
   ) stored;
 
 -- 3) 트라이그램 GIN 인덱스 (ILIKE / similarity 가속)
@@ -30,6 +45,7 @@ create or replace function search_items(p_query text, p_limit int default 50)
 returns setof items
 language sql
 stable
+set search_path = public, extensions
 as $$
   select *
   from items

@@ -162,14 +162,15 @@ export default function HomePage() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-surface">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        {/* 상단 앰비언트 글로우 — 부드럽게 번지게 (blur + 완만한 falloff로 '딱딱한 원'이 아니라 빛 번짐) */}
+        {/* 상단 한정 소프트 워시 — 화면 절반을 덮지 않고 위에서 부드럽게 페이드 (Notion/Linear 헤더 무드) */}
         <div
-          className="absolute -left-40 -top-48 h-[640px] w-[640px] rounded-full blur-3xl transition-colors"
-          style={{ background: "radial-gradient(circle, var(--profile-accent) 0%, transparent 62%)", opacity: 0.20 }}
+          className="absolute inset-x-0 top-0 h-[300px] transition-colors"
+          style={{ background: "linear-gradient(180deg, color-mix(in srgb, var(--profile-accent) 12%, transparent), transparent)" }}
         />
+        {/* 우상단 따뜻한 포인트 (피치 톤, 아주 옅게) — 모노톤 핑크 단조로움 보완 */}
         <div
-          className="absolute left-1/3 -top-36 h-[440px] w-[440px] rounded-full blur-3xl transition-colors"
-          style={{ background: "radial-gradient(circle, var(--profile-accent) 0%, transparent 66%)", opacity: 0.10 }}
+          className="absolute -top-12 right-[-70px] h-[260px] w-[260px] rounded-full blur-3xl"
+          style={{ background: "radial-gradient(circle, rgb(var(--brand-peach)) 0%, transparent 65%)", opacity: 0.22 }}
         />
       </div>
       <header className="relative z-10 px-5 pt-14 pb-3 flex items-center justify-between">
